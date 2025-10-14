@@ -1,0 +1,68 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: "Inter", "Geist Sans", "system-ui", "Arial", sans-serif;
+}
+
+/* Arabic font family for RTL content */
+[dir="rtl"] {
+  font-family: "Noto Sans Arabic", "Tajawal", "Cairo", "Amiri",
+    "Scheherazade New", "Arial", sans-serif !important;
+}
+
+/* Ensure proper Arabic text rendering */
+[dir="rtl"] * {
+  font-family: "Noto Sans Arabic", "Tajawal", "Cairo", "Amiri",
+    "Scheherazade New", "Arial", sans-serif !important;
+}
+
+/* Force Arabic font for all elements in RTL mode */
+[dir="rtl"] h1,
+[dir="rtl"] h2,
+[dir="rtl"] h3,
+[dir="rtl"] h4,
+[dir="rtl"] h5,
+[dir="rtl"] h6,
+[dir="rtl"] p,
+[dir="rtl"] span,
+[dir="rtl"] div,
+[dir="rtl"] a,
+[dir="rtl"] button {
+  font-family: "Noto Sans Arabic", "Tajawal", "Cairo", "Amiri",
+    "Scheherazade New", "Arial", sans-serif !important;
+}
+
+/* Override any Tailwind font classes in RTL mode */
+[dir="rtl"] .font-sans,
+[dir="rtl"] .font-serif,
+[dir="rtl"] .font-mono {
+  font-family: "Noto Sans Arabic", "Tajawal", "Cairo", "Amiri",
+    "Scheherazade New", "Arial", sans-serif !important;
+}
+
+/* Test rule to verify Arabic fonts are working */
+[dir="rtl"] {
+  font-weight: 500;
+  letter-spacing: 0.025em;
+}
