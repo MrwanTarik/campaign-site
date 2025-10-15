@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { list } from "@vercel/blob";
 
 interface AnalyticsData {
   guid: string;
