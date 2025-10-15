@@ -5,25 +5,9 @@ export async function GET(request: NextRequest) {
   try {
     console.log("Reading analytics from Vercel Blob...");
 
-    const blobToken =
-      process.env.BLOB_READ_WRITE_TOKEN || process.env.BLOB_READ_TOKEN;
-    if (!blobToken) {
-      console.error(
-        "Missing Vercel Blob token (BLOB_READ_WRITE_TOKEN or BLOB_READ_TOKEN)"
-      );
-      return NextResponse.json(
-        {
-          success: false,
-          error: "Server misconfiguration: missing blob token",
-        },
-        { status: 500 }
-      );
-    }
-
     // List all blobs with analytics prefix
     const { blobs } = await list({
       prefix: "analytics-",
-      token: blobToken,
     });
 
     console.log(`Found ${blobs.length} analytics blobs`);
@@ -32,7 +16,7 @@ export async function GET(request: NextRequest) {
     const logs = [];
     for (const blob of blobs) {
       try {
-        const response = await fetch(blob.url, { cache: "no-store" });
+        const response = await fetch(blob.url);
         const data = await response.json();
         logs.push(data);
       } catch (error) {
@@ -62,4 +46,3 @@ export async function GET(request: NextRequest) {
     );
   }
 }
-//TEST
