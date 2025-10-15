@@ -45,8 +45,11 @@ export default function LogsPage() {
       }
       const data = await response.json();
 
-      // Deduplicate logs based on sessionId and guid combination
-      const uniqueLogs = deduplicateLogs(data.logs || []);
+      // Normalize and deduplicate logs
+      const normalized = normalizeLogs(
+        Array.isArray(data.logs) ? data.logs : []
+      );
+      const uniqueLogs = deduplicateLogs(normalized);
       setLogs(uniqueLogs);
       setLastUpdated(new Date());
     } catch (err) {
@@ -71,8 +74,41 @@ export default function LogsPage() {
     });
   };
 
+  // Ensure every log has safe defaults to avoid undefined access
+  const normalizeLogs = (rawLogs: any[]): AnalyticsData[] => {
+    return rawLogs.map((log) => ({
+      guid: typeof log?.guid === "string" ? log.guid : "",
+      sessionId: typeof log?.sessionId === "string" ? log.sessionId : "",
+      ip: (log?.ip ?? null) as string | null,
+      country: (log?.country ?? null) as string | null,
+      secondsOnPage: Number.isFinite(log?.secondsOnPage)
+        ? Number(log.secondsOnPage)
+        : 0,
+      sectionsViewed: Array.isArray(log?.sectionsViewed)
+        ? (log.sectionsViewed as string[])
+        : [],
+      menuClicks: Array.isArray(log?.menuClicks)
+        ? (log.menuClicks as Array<{ t: number; label: string; href: string }>)
+        : [],
+      faqOpened: Array.isArray(log?.faqOpened)
+        ? (log.faqOpened as string[])
+        : [],
+      events: Array.isArray(log?.events)
+        ? (log.events as Array<{ t: number; type: string; [key: string]: any }>)
+        : [],
+      path: typeof log?.path === "string" ? log.path : "",
+      ua: typeof log?.ua === "string" ? log.ua : "",
+      ts:
+        typeof log?.ts === "string" || typeof log?.timestamp === "string"
+          ? log.ts || log.timestamp
+          : new Date().toISOString(),
+    }));
+  };
+
   const formatDate = (timestamp: string) => {
-    return new Date(timestamp).toLocaleString("ar-SA", {
+    const d = new Date(timestamp);
+    if (isNaN(d.getTime())) return "غير معروف";
+    return d.toLocaleString("ar-SA", {
       year: "numeric",
       month: "long",
       day: "numeric",
@@ -97,7 +133,7 @@ export default function LogsPage() {
         )
       : 0;
   const totalSectionsViewed = logs.reduce(
-    (sum, log) => sum + log.sectionsViewed.length,
+    (sum, log) => sum + (log.sectionsViewed?.length || 0),
     0
   );
   const uniqueCountries = new Set(
