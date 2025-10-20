@@ -7,6 +7,83 @@ export default function InterestPage() {
     typeof window !== "undefined" &&
     new URLSearchParams(window.location.search).get("debug") === "1";
 
+  // Language state
+  const [lang, setLang] = React.useState<"ar" | "en">(() => {
+    if (typeof window === "undefined") return "ar";
+    return (localStorage.getItem("jiwar_lang") as "ar" | "en") || "ar";
+  });
+  React.useEffect(() => {
+    if (typeof window !== "undefined") localStorage.setItem("jiwar_lang", lang);
+  }, [lang]);
+
+  const isAR = lang === "ar";
+  const dir = isAR ? "rtl" : "ltr";
+
+  // Translations
+  const tr = {
+    ar: {
+      brand: "جِوار تايم شير",
+      tagline: "قربٌ يطمئن القلب",
+      backHome: "العودة للصفحة الرئيسية",
+      pageTitle: "تسجيل الإهتمام",
+      subtitle1: "أسرع بالتسجيل الآن ليتواصل معك فريق جوار الإستشاري",
+      subtitle2:
+        "سيتم التواصل معكم لتأكيد الاهتمام وإدراج معلوماتكم في قائمة الحجز المبكر",
+      selectUp:
+        "اختر حتى ثلاث وحدات تهمّك وأرسل بياناتك ليتواصل معك فريق جِوار.",
+      jiwar1Title: "جِوار 1",
+      jiwar1Desc: "إطلالات مباشرة على الحرم والكعبة المشرفة",
+      jiwar2Title: "جِوار 2",
+      jiwar2Desc: "على بُعد 10 دقائق من الحرم مع باصات ترددية",
+      maxError: "يمكنك اختيار حتى 3 خيارات فقط.",
+      maxNote: "يمكنك اختيار حتى 3 خيارات فقط.",
+      registerTitle: "سجّل اهتمامك",
+      nameLabel: "الاسم *",
+      emailLabel: "البريد الإلكتروني *",
+      countryLabel: "الدولة",
+      phoneLabel: "الهاتف",
+      notesLabel: "ملاحظات",
+      countryPlaceholder: "ابدأ بالكتابة...",
+      selectedCount: "المحدّد الآن:",
+      submitBtn: "إرسال",
+      successMsg: "شكرًا لك! تم تسجيل اهتمامك.",
+      errorMsg: "الاسم والبريد الإلكتروني مطلوبان.",
+      selected: "محدد",
+      select: "تحديد",
+    },
+    en: {
+      brand: "Jiwar Timeshare",
+      tagline: "Peace of heart, steps from the Haram",
+      backHome: "Back to Home",
+      pageTitle: "Register Interest",
+      subtitle1: "Register now to be contacted by the Jiwar advisory team",
+      subtitle2:
+        "We will contact you to confirm your interest and add your information to the early booking list",
+      selectUp:
+        "Choose up to three units that interest you and send your details for the Jiwar team to contact you.",
+      jiwar1Title: "Jiwar 1",
+      jiwar1Desc: "Direct views of the Haram and Kaaba",
+      jiwar2Title: "Jiwar 2",
+      jiwar2Desc: "10 minutes from the Haram with shuttle buses",
+      maxError: "You can select up to 3 options only.",
+      maxNote: "You can select up to 3 options only.",
+      registerTitle: "Register Your Interest",
+      nameLabel: "Name *",
+      emailLabel: "Email *",
+      countryLabel: "Country",
+      phoneLabel: "Phone",
+      notesLabel: "Notes",
+      countryPlaceholder: "Start typing...",
+      selectedCount: "Currently selected:",
+      submitBtn: "Submit",
+      successMsg: "Thank you! Your interest has been registered.",
+      errorMsg: "Name and email are required.",
+      selected: "Selected",
+      select: "Select",
+    },
+  } as const;
+  const t = tr[lang];
+
   const getOrCreateGUID = React.useCallback(() => {
     const key = "jiwar_guid";
     let id = typeof window !== "undefined" ? localStorage.getItem(key) : null;
@@ -54,68 +131,120 @@ export default function InterestPage() {
   type Option = {
     id: string;
     tower: "Jiwar 1" | "Jiwar 2";
-    title: string;
-    area: string;
-    investment: string;
-    period: string;
-    img: string;
+    title_ar: string;
+    title_en: string;
+    area_ar: string;
+    area_en: string;
+    investment_ar: string;
+    investment_en: string;
+    period_ar: string;
+    period_en: string;
+    images: string[];
   };
   const jiwar1: Option[] = [
     {
       id: "j1-studio-city",
       tower: "Jiwar 1",
-      title: "استوديو — إطلالة مدينة مكة",
-      area: "المساحة: 46 م²",
-      investment: "الاستثمار: يبدأ من 50,000 ريال",
-      period: "المدة: 10 سنوات × 7 أيام سنويًا",
-      img: "https://images.unsplash.com/photo-1505692794403-34d4982dc1ae?q=80&w=1200&auto=format&fit=crop",
+      title_ar: "استوديو — إطلالة مدينة مكة",
+      title_en: "Studio — Makkah City View",
+      area_ar: "المساحة: 46 م²",
+      area_en: "Area: 46 m²",
+      investment_ar: "الاستثمار: يبدأ من 50,000 ريال",
+      investment_en: "Investment: Starting from SAR 50,000",
+      period_ar: "المدة: 10 سنوات × 7 أيام سنويًا",
+      period_en: "Period: 10 years × 7 days annually",
+      images: [
+        "https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?q=80&w=1200&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?q=80&w=1200&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?q=80&w=1200&auto=format&fit=crop",
+      ],
     },
     {
       id: "j1-1br-haram",
       tower: "Jiwar 1",
-      title: "شقة غرفة واحدة — إطلالة الحرم",
-      area: "المساحة: 113 م²",
-      investment: "الاستثمار: يبدأ من 117,000 ريال",
-      period: "المدة: 10 سنوات × 7 أيام سنويًا",
-      img: "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?q=80&w=1200&auto=format&fit=crop",
+      title_ar: "شقة غرفة واحدة — إطلالة الحرم",
+      title_en: "One Bedroom — Haram View",
+      area_ar: "المساحة: 113 م²",
+      area_en: "Area: 113 m²",
+      investment_ar: "الاستثمار: يبدأ من 117,000 ريال",
+      investment_en: "Investment: Starting from SAR 117,000",
+      period_ar: "المدة: 10 سنوات × 7 أيام سنويًا",
+      period_en: "Period: 10 years × 7 days annually",
+      images: [
+        "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?q=80&w=1200&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?q=80&w=1200&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1566195992011-5f6b21e539aa?q=80&w=1200&auto=format&fit=crop",
+      ],
     },
     {
       id: "j1-2br-kaba",
       tower: "Jiwar 1",
-      title: "شقة غرفتين — إطلالة الكعبة",
-      area: "المساحة: 171 م²",
-      investment: "الاستثمار: يبدأ من 170,000 ريال",
-      period: "المدة: 10 سنوات × 7 أيام سنويًا",
-      img: "https://images.unsplash.com/photo-1494526585095-c41746248156?q=80&w=1200&auto=format&fit=crop",
+      title_ar: "شقة غرفتين — إطلالة الكعبة",
+      title_en: "Two Bedrooms — Kaaba View",
+      area_ar: "المساحة: 171 م²",
+      area_en: "Area: 171 m²",
+      investment_ar: "الاستثمار: يبدأ من 170,000 ريال",
+      investment_en: "Investment: Starting from SAR 170,000",
+      period_ar: "المدة: 10 سنوات × 7 أيام سنويًا",
+      period_en: "Period: 10 years × 7 days annually",
+      images: [
+        "https://images.unsplash.com/photo-1494526585095-c41746248156?q=80&w=1200&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?q=80&w=1200&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?q=80&w=1200&auto=format&fit=crop",
+      ],
     },
   ];
   const jiwar2: Option[] = [
     {
       id: "j2-double",
       tower: "Jiwar 2",
-      title: "غرفة مزدوجة",
-      area: "المساحة: 26 م²",
-      investment: "الاستثمار: يبدأ من 25,000 ريال",
-      period: "المدة: 20 سنة × 7 أيام سنويًا",
-      img: "https://images.unsplash.com/photo-1560066984-138dadb4c035?q=80&w=1200&auto=format&fit=crop",
+      title_ar: "غرفة مزدوجة",
+      title_en: "Double Room",
+      area_ar: "المساحة: 26 م²",
+      area_en: "Area: 26 m²",
+      investment_ar: "الاستثمار: يبدأ من 25,000 ريال",
+      investment_en: "Investment: Starting from SAR 25,000",
+      period_ar: "المدة: 20 سنة × 7 أيام سنويًا",
+      period_en: "Period: 20 years × 7 days annually",
+      images: [
+        "https://images.unsplash.com/photo-1560066984-138dadb4c035?q=80&w=1200&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1618773928121-c32242e63f39?q=80&w=1200&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1566665797739-1674de7a421a?q=80&w=1200&auto=format&fit=crop",
+      ],
     },
     {
       id: "j2-three-twins",
       tower: "Jiwar 2",
-      title: "غرفة بثلاثة أسِرّة منفصلة",
-      area: "المساحة: 26 م²",
-      investment: "الاستثمار: 30,000 ريال",
-      period: "المدة: 20 سنة × 7 أيام سنويًا",
-      img: "https://images.unsplash.com/photo-1551776235-dde6d4829808?q=80&w=1200&auto=format&fit=crop",
+      title_ar: "غرفة بثلاثة أسِرّة منفصلة",
+      title_en: "Three Twin Beds Room",
+      area_ar: "المساحة: 26 م²",
+      area_en: "Area: 26 m²",
+      investment_ar: "الاستثمار: 30,000 ريال",
+      investment_en: "Investment: SAR 30,000",
+      period_ar: "المدة: 20 سنة × 7 أيام سنويًا",
+      period_en: "Period: 20 years × 7 days annually",
+      images: [
+        "https://images.unsplash.com/photo-1595526114035-0d45ed16cfbf?q=80&w=1200&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1598928506311-c55ded91a20c?q=80&w=1200&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1554995207-c18c203602cb?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1770",
+      ],
     },
     {
       id: "j2-family-studio",
       tower: "Jiwar 2",
-      title: "استوديو عائلي — غرفتان (5 أسِرّة)",
-      area: "المساحة: 48 م²",
-      investment: "الاستثمار: 46,000 ريال",
-      period: "المدة: 20 سنة × 7 أيام سنويًا",
-      img: "https://images.unsplash.com/photo-1540518614846-7eded433c457?q=80&w=1200&auto=format&fit=crop",
+      title_ar: "استوديو عائلي — غرفتان (5 أسِرّة)",
+      title_en: "Family Studio — Two Rooms (5 Beds)",
+      area_ar: "المساحة: 48 م²",
+      area_en: "Area: 48 m²",
+      investment_ar: "الاستثمار: 46,000 ريال",
+      investment_en: "Investment: SAR 46,000",
+      period_ar: "المدة: 20 سنة × 7 أيام سنويًا",
+      period_en: "Period: 20 years × 7 days annually",
+      images: [
+        "https://images.unsplash.com/photo-1540518614846-7eded433c457?q=80&w=1200&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?q=80&w=1200&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1616594039964-ae9021a400a0?q=80&w=1200&auto=format&fit=crop",
+      ],
     },
   ];
 
@@ -128,7 +257,7 @@ export default function InterestPage() {
         return prev.filter((x) => x !== id);
       }
       if (prev.length >= 3) {
-        setError("يمكنك اختيار حتى 3 خيارات فقط.");
+        setError(t.maxError);
         return prev;
       }
       setError("");
@@ -150,33 +279,200 @@ export default function InterestPage() {
 
   const countries = React.useMemo(
     () => [
-      "Saudi Arabia",
-      "United Arab Emirates",
-      "Qatar",
-      "Kuwait",
-      "Bahrain",
-      "Oman",
-      "Jordan",
-      "Egypt",
-      "Morocco",
-      "Tunisia",
+      "Afghanistan",
+      "Albania",
       "Algeria",
-      "Lebanon",
-      "Turkey",
-      "Pakistan",
+      "Andorra",
+      "Angola",
+      "Antigua and Barbuda",
+      "Argentina",
+      "Armenia",
+      "Australia",
+      "Austria",
+      "Azerbaijan",
+      "Bahamas",
+      "Bahrain",
+      "Bangladesh",
+      "Barbados",
+      "Belarus",
+      "Belgium",
+      "Belize",
+      "Benin",
+      "Bhutan",
+      "Bolivia",
+      "Bosnia and Herzegovina",
+      "Botswana",
+      "Brazil",
+      "Brunei",
+      "Bulgaria",
+      "Burkina Faso",
+      "Burundi",
+      "Cambodia",
+      "Cameroon",
+      "Canada",
+      "Cape Verde",
+      "Central African Republic",
+      "Chad",
+      "Chile",
+      "China",
+      "Colombia",
+      "Comoros",
+      "Congo",
+      "Costa Rica",
+      "Croatia",
+      "Cuba",
+      "Cyprus",
+      "Czech Republic",
+      "Denmark",
+      "Djibouti",
+      "Dominica",
+      "Dominican Republic",
+      "East Timor",
+      "Ecuador",
+      "Egypt",
+      "El Salvador",
+      "Equatorial Guinea",
+      "Eritrea",
+      "Estonia",
+      "Ethiopia",
+      "Fiji",
+      "Finland",
+      "France",
+      "Gabon",
+      "Gambia",
+      "Georgia",
+      "Germany",
+      "Ghana",
+      "Greece",
+      "Grenada",
+      "Guatemala",
+      "Guinea",
+      "Guinea-Bissau",
+      "Guyana",
+      "Haiti",
+      "Honduras",
+      "Hungary",
+      "Iceland",
       "India",
       "Indonesia",
+      "Iran",
+      "Iraq",
+      "Ireland",
+      "Italy",
+      "Ivory Coast",
+      "Jamaica",
+      "Japan",
+      "Jordan",
+      "Kazakhstan",
+      "Kenya",
+      "Kiribati",
+      "Kuwait",
+      "Kyrgyzstan",
+      "Laos",
+      "Latvia",
+      "Lebanon",
+      "Lesotho",
+      "Liberia",
+      "Libya",
+      "Liechtenstein",
+      "Lithuania",
+      "Luxembourg",
+      "Macedonia",
+      "Madagascar",
+      "Malawi",
       "Malaysia",
-      "Bangladesh",
+      "Maldives",
+      "Mali",
+      "Malta",
+      "Marshall Islands",
+      "Mauritania",
+      "Mauritius",
+      "Mexico",
+      "Micronesia",
+      "Moldova",
+      "Monaco",
+      "Mongolia",
+      "Montenegro",
+      "Morocco",
+      "Mozambique",
+      "Myanmar",
+      "Namibia",
+      "Nauru",
+      "Nepal",
+      "Netherlands",
+      "New Zealand",
+      "Nicaragua",
+      "Niger",
+      "Nigeria",
+      "North Korea",
+      "Norway",
+      "Oman",
+      "Pakistan",
+      "Palau",
+      "Palestine",
+      "Panama",
+      "Papua New Guinea",
+      "Paraguay",
+      "Peru",
       "Philippines",
+      "Poland",
+      "Portugal",
+      "Qatar",
+      "Romania",
+      "Russia",
+      "Rwanda",
+      "Saint Kitts and Nevis",
+      "Saint Lucia",
+      "Saint Vincent and the Grenadines",
+      "Samoa",
+      "San Marino",
+      "Sao Tome and Principe",
+      "Saudi Arabia",
+      "Senegal",
+      "Serbia",
+      "Seychelles",
+      "Sierra Leone",
+      "Singapore",
+      "Slovakia",
+      "Slovenia",
+      "Solomon Islands",
+      "Somalia",
+      "South Africa",
+      "South Korea",
+      "South Sudan",
+      "Spain",
+      "Sri Lanka",
+      "Sudan",
+      "Suriname",
+      "Swaziland",
+      "Sweden",
+      "Switzerland",
+      "Syria",
+      "Taiwan",
+      "Tajikistan",
+      "Tanzania",
+      "Thailand",
+      "Togo",
+      "Tonga",
+      "Trinidad and Tobago",
+      "Tunisia",
+      "Turkey",
+      "Turkmenistan",
+      "Tuvalu",
+      "Uganda",
+      "Ukraine",
+      "United Arab Emirates",
       "United Kingdom",
       "United States",
-      "France",
-      "Germany",
-      "Spain",
-      "Italy",
-      "Canada",
-      "Australia",
+      "Uruguay",
+      "Uzbekistan",
+      "Vanuatu",
+      "Vatican City",
+      "Venezuela",
+      "Vietnam",
+      "Yemen",
+      "Zambia",
+      "Zimbabwe",
     ],
     []
   );
@@ -204,7 +500,7 @@ export default function InterestPage() {
     e.preventDefault();
     setSent(null);
     if (!form.name.trim() || !form.email.trim()) {
-      setSent({ ok: false, message: "الاسم والبريد الإلكتروني مطلوبان." });
+      setSent({ ok: false, message: t.errorMsg });
       return;
     }
     const guid = getOrCreateGUID();
@@ -231,7 +527,7 @@ export default function InterestPage() {
     };
     sendRecord(payload);
     setSubmitted(true);
-    setSent({ ok: true, message: "شكرًا لك! تم تسجيل اهتمامك." });
+    setSent({ ok: true, message: t.successMsg });
   };
 
   React.useEffect(() => {
@@ -277,7 +573,7 @@ export default function InterestPage() {
 
   return (
     <div
-      dir="rtl"
+      dir={dir}
       className="min-h-screen bg-white text-[#0b3d2e] selection:bg-[#1c9a6f]/20"
     >
       <header className="sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-[#1c9a6f]/20">
@@ -285,18 +581,36 @@ export default function InterestPage() {
           <div className="flex items-center gap-3">
             <LogoJiwar className="w-9 h-9" />
             <div>
-              <p className="font-semibold leading-tight">جِوار تايم شير</p>
-              <p className="text-xs text-[#0b3d2e]/70 -mt-0.5">
-                قربٌ يطمئن القلب
-              </p>
+              <p className="font-semibold leading-tight">{t.brand}</p>
+              <p className="text-xs text-[#0b3d2e]/70 -mt-0.5">{t.tagline}</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
+            <div
+              className={`${isAR ? "ml-2" : "mr-2"} flex items-center gap-1`}
+            >
+              <button
+                onClick={() => setLang("ar")}
+                className={`px-2 py-1 rounded-lg text-sm ${
+                  isAR ? "bg-[#1c9a6f] text-white" : "hover:bg-[#1c9a6f]/10"
+                }`}
+              >
+                ع
+              </button>
+              <button
+                onClick={() => setLang("en")}
+                className={`px-2 py-1 rounded-lg text-sm ${
+                  !isAR ? "bg-[#1c9a6f] text-white" : "hover:bg-[#1c9a6f]/10"
+                }`}
+              >
+                EN
+              </button>
+            </div>
             <a
               href="/"
               className="inline-flex items-center justify-center rounded-2xl border border-[#1c9a6f]/40 bg-[#1c9a6f]/10 px-4 py-2 text-sm font-semibold text-[#0b3d2e] hover:bg-[#1c9a6f]/20 transition shadow-sm"
             >
-              العودة للصفحة الرئيسية
+              {t.backHome}
             </a>
           </div>
         </div>
@@ -304,66 +618,97 @@ export default function InterestPage() {
 
       <section className="relative bg-white border-b border-[#1c9a6f]/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <h1 className="text-3xl sm:text-4xl font-extrabold">
-            خيارات الوحدات — جِوار 1 و جِوار 2
-          </h1>
-          <p className="mt-2 text-[#0b3d2e]/80">
-            اختر حتى ثلاث وحدات تهمّك وأرسل بياناتك ليتواصل معك فريق جِوار.
+          <h1 className="text-3xl sm:text-4xl font-extrabold">{t.pageTitle}</h1>
+          <p className="mt-3 text-lg text-[#1c9a6f] font-semibold">
+            {t.subtitle1}
           </p>
+          <p className="mt-2 text-[#0b3d2e]/80">{t.subtitle2}</p>
+          <p className="mt-4 text-sm text-[#0b3d2e]/70">{t.selectUp}</p>
         </div>
       </section>
 
       <section className="relative py-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-2 gap-6">
-            <div>
-              <h2 className="text-xl font-extrabold">جِوار 1</h2>
-              <div className="mt-4 space-y-4">
+          <div className="space-y-8">
+            {/* Jiwar 1 Section */}
+            <div className="bg-gradient-to-br from-[#1c9a6f]/5 to-[#1c9a6f]/10 rounded-3xl border-2 border-[#1c9a6f]/30 p-6 shadow-lg">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="bg-[#1c9a6f] text-white rounded-full w-10 h-10 flex items-center justify-center font-bold text-lg">
+                  1
+                </div>
+                <div>
+                  <h2 className="text-2xl font-extrabold text-[#1c9a6f]">
+                    {t.jiwar1Title}
+                  </h2>
+                  <p className="text-sm text-[#0b3d2e]/70">{t.jiwar1Desc}</p>
+                </div>
+              </div>
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {jiwar1.map((opt) => (
                   <RoomCard
                     key={opt.id}
                     opt={opt}
+                    lang={lang}
                     selected={selected.includes(opt.id)}
                     disabled={
                       !selected.includes(opt.id) && selected.length >= 3
                     }
                     onToggle={() => toggleSelect(opt.id)}
+                    t={t}
                   />
                 ))}
               </div>
             </div>
-            <div>
-              <h2 className="text-xl font-extrabold">جِوار 2</h2>
-              <div className="mt-4 space-y-4">
+
+            {/* Jiwar 2 Section */}
+            <div className="bg-gradient-to-br from-[#0b3d2e]/5 to-[#0b3d2e]/10 rounded-3xl border-2 border-[#0b3d2e]/30 p-6 shadow-lg">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="bg-[#0b3d2e] text-white rounded-full w-10 h-10 flex items-center justify-center font-bold text-lg">
+                  2
+                </div>
+                <div>
+                  <h2 className="text-2xl font-extrabold text-[#0b3d2e]">
+                    {t.jiwar2Title}
+                  </h2>
+                  <p className="text-sm text-[#0b3d2e]/70">{t.jiwar2Desc}</p>
+                </div>
+              </div>
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {jiwar2.map((opt) => (
                   <RoomCard
                     key={opt.id}
                     opt={opt}
+                    lang={lang}
                     selected={selected.includes(opt.id)}
                     disabled={
                       !selected.includes(opt.id) && selected.length >= 3
                     }
                     onToggle={() => toggleSelect(opt.id)}
+                    t={t}
                   />
                 ))}
               </div>
             </div>
           </div>
-          {error && <p className="mt-4 text-sm text-red-600">{error}</p>}
-          <p className="mt-2 text-xs text-[#0b3d2e]/60">
-            يمكنك اختيار حتى 3 خيارات فقط.
+          {error && (
+            <p className="mt-6 text-center text-sm text-red-600 font-semibold">
+              {error}
+            </p>
+          )}
+          <p className="mt-4 text-center text-sm text-[#0b3d2e]/70 bg-[#1c9a6f]/5 rounded-xl p-3 border border-[#1c9a6f]/20">
+            {t.maxNote}
           </p>
         </div>
       </section>
 
       <section className="relative py-8 bg-[#f9f9f9] border-t border-[#1c9a6f]/20">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h3 className="text-lg font-bold">سجّل اهتمامك</h3>
+          <h3 className="text-lg font-bold">{t.registerTitle}</h3>
           <form className="mt-4 space-y-4" onSubmit={onSubmit}>
             <div className="grid md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-semibold mb-1">
-                  الاسم *
+                  {t.nameLabel}
                 </label>
                 <input
                   value={form.name}
@@ -374,7 +719,7 @@ export default function InterestPage() {
               </div>
               <div>
                 <label className="block text-sm font-semibold mb-1">
-                  البريد الإلكتروني *
+                  {t.emailLabel}
                 </label>
                 <input
                   type="email"
@@ -386,7 +731,7 @@ export default function InterestPage() {
               </div>
               <div>
                 <label className="block text-sm font-semibold mb-1">
-                  الدولة
+                  {t.countryLabel}
                 </label>
                 <input
                   list="country-list"
@@ -394,7 +739,7 @@ export default function InterestPage() {
                   onChange={(e) =>
                     setForm({ ...form, country: e.target.value })
                   }
-                  placeholder="ابدأ بالكتابة..."
+                  placeholder={t.countryPlaceholder}
                   className="w-full rounded-xl border border-[#1c9a6f]/30 p-2 outline-none focus:ring-2 focus:ring-[#1c9a6f]/40"
                 />
                 <datalist id="country-list">
@@ -405,7 +750,7 @@ export default function InterestPage() {
               </div>
               <div>
                 <label className="block text-sm font-semibold mb-1">
-                  الهاتف
+                  {t.phoneLabel}
                 </label>
                 <input
                   value={form.phone}
@@ -415,7 +760,7 @@ export default function InterestPage() {
               </div>
               <div className="md:col-span-2">
                 <label className="block text-sm font-semibold mb-1">
-                  ملاحظات
+                  {t.notesLabel}
                 </label>
                 <textarea
                   value={form.notes}
@@ -427,13 +772,13 @@ export default function InterestPage() {
             </div>
             <div className="flex items-center justify-between">
               <div className="text-sm text-[#0b3d2e]/70">
-                المحدّد الآن: <b>{selected.length}</b> / 3
+                {t.selectedCount} <b>{selected.length}</b> / 3
               </div>
               <button
                 type="submit"
                 className="inline-flex items-center justify-center rounded-2xl bg-[#1c9a6f] text-white px-6 py-2 font-bold hover:brightness-110 transition shadow-lg shadow-[#1c9a6f]/20"
               >
-                إرسال
+                {t.submitBtn}
               </button>
             </div>
             {sent && (
@@ -459,42 +804,132 @@ export default function InterestPage() {
           )}
         </div>
       </section>
+
+      <footer className="border-t border-[#1c9a6f]/20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="flex flex-col items-center gap-4">
+            <div className="flex flex-wrap items-center justify-center gap-4 text-sm text-[#0b3d2e]/70">
+              <a href="/terms" className="hover:text-[#1c9a6f] transition">
+                {isAR ? "الشروط والأحكام" : "Terms & Conditions"}
+              </a>
+              <span className="text-[#0b3d2e]/30">|</span>
+              <a href="/privacy" className="hover:text-[#1c9a6f] transition">
+                {isAR ? "سياسة الخصوصية" : "Privacy Policy"}
+              </a>
+            </div>
+            <p className="text-xs text-[#0b3d2e]/60 text-center">
+              © {new Date().getFullYear()}{" "}
+              {isAR
+                ? "جِوار تايم شير — جميع الحقوق محفوظة."
+                : "Jiwar Timeshare — All rights reserved."}
+            </p>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
 
 function RoomCard({
   opt,
+  lang,
   selected,
   disabled,
   onToggle,
+  t,
 }: {
   opt: {
     id: string;
     tower: string;
-    title: string;
-    area: string;
-    investment: string;
-    period: string;
-    img: string;
+    title_ar: string;
+    title_en: string;
+    area_ar: string;
+    area_en: string;
+    investment_ar: string;
+    investment_en: string;
+    period_ar: string;
+    period_en: string;
+    images: string[];
   };
+  lang: "ar" | "en";
   selected: boolean;
   disabled: boolean;
   onToggle: () => void;
+  t: any;
 }) {
+  const [currentImageIndex, setCurrentImageIndex] = React.useState(0);
+
+  const isAR = lang === "ar";
+  const title = isAR ? opt.title_ar : opt.title_en;
+  const area = isAR ? opt.area_ar : opt.area_en;
+  const investment = isAR ? opt.investment_ar : opt.investment_en;
+  const period = isAR ? opt.period_ar : opt.period_en;
+
+  // In RTL (Arabic), reverse both arrows and navigation direction
+  const nextImage = () => {
+    setCurrentImageIndex((prev) =>
+      isAR
+        ? (prev - 1 + opt.images.length) % opt.images.length
+        : (prev + 1) % opt.images.length
+    );
+  };
+
+  const prevImage = () => {
+    setCurrentImageIndex((prev) =>
+      isAR
+        ? (prev + 1) % opt.images.length
+        : (prev - 1 + opt.images.length) % opt.images.length
+    );
+  };
+
   return (
     <div
       className={`rounded-3xl overflow-hidden border ${
         selected ? "border-[#1c9a6f]" : "border-[#1c9a6f]/20"
       } bg-white shadow-sm`}
     >
-      <div
-        className="h-40 bg-cover bg-center"
-        style={{ backgroundImage: `url(${opt.img})` }}
-      />
+      <div className="relative h-50 bg-cover bg-center group">
+        <div
+          className="h-full bg-cover bg-center transition-all duration-300"
+          style={{ backgroundImage: `url(${opt.images[currentImageIndex]})` }}
+        />
+        {opt.images.length > 1 && (
+          <>
+            <button
+              onClick={prevImage}
+              className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-[#0b3d2e] rounded-full w-8 h-8 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity text-xl"
+              type="button"
+              aria-label={isAR ? "الصورة السابقة" : "Previous image"}
+            >
+              {isAR ? "›" : "‹"}
+            </button>
+            <button
+              onClick={nextImage}
+              className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-[#0b3d2e] rounded-full w-8 h-8 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity text-xl"
+              type="button"
+              aria-label={isAR ? "الصورة التالية" : "Next image"}
+            >
+              {isAR ? "‹" : "›"}
+            </button>
+            <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5">
+              {opt.images.map((_, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setCurrentImageIndex(idx)}
+                  className={`w-2 h-2 rounded-full transition-all ${
+                    idx === currentImageIndex ? "bg-white w-4" : "bg-white/60"
+                  }`}
+                  type="button"
+                  aria-label={`${isAR ? "صورة" : "Image"} ${idx + 1}`}
+                />
+              ))}
+            </div>
+          </>
+        )}
+      </div>
       <div className="p-4">
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-bold text-[#0b3d2e]">{opt.title}</h3>
+          <h3 className="text-lg font-bold text-[#0b3d2e]">{title}</h3>
           <label
             className={`inline-flex items-center gap-2 text-sm ${
               disabled && !selected ? "opacity-50" : ""
@@ -507,12 +942,12 @@ function RoomCard({
               onChange={onToggle}
               className="accent-[#1c9a6f] w-4 h-4"
             />
-            <span>{selected ? "محدد" : "تحديد"}</span>
+            <span>{selected ? t.selected : t.select}</span>
           </label>
         </div>
-        <p className="mt-2 text-[#0b3d2e]/80">{opt.area}</p>
-        <p className="text-[#0b3d2e]/80">{opt.investment}</p>
-        <p className="text-[#0b3d2e]/80">{opt.period}</p>
+        <p className="mt-2 text-[#0b3d2e]/80">{area}</p>
+        <p className="text-[#0b3d2e]/80">{investment}</p>
+        <p className="text-[#0b3d2e]/80">{period}</p>
       </div>
     </div>
   );

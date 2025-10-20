@@ -37,7 +37,7 @@ export default function LandingJiwarTimeshare() {
       badge1: "ملكية مضمونة 20 سنة",
       badge2: "أسبوع ثابت كل عام",
       badge3: "أسعار تبدأ من 25,000 ريال",
-      ctaPrimary: "الحجز المبكر",
+      ctaPrimary: "تسجيل الإهتمام",
       ctaSecondary: "اكتشف التفاصيل",
       cardTitle: "سكينة الروح وضمان الاستثمار",
       cardText:
@@ -86,6 +86,14 @@ export default function LandingJiwarTimeshare() {
           q: "أين يقع كل برج؟",
           a: "برج جِوار 1 ملاصق لصحن الحرم، وبرج جِوار 2 على بُعد 10 دقائق مع باصات ترددية على مدار الساعة.",
         },
+        {
+          q: "هل يترتب علي أية التزامات مادية في حال تسجيل الإهتمام",
+          a: "لا، لن يترتب عليكم أية التزامات. تسجيل الاهتمام فقط لضمان التواصل معكم عند الحجز المبكر حيث أن عدد الوحدات المتاحة سيكون محدود",
+        },
+        {
+          q: "هل يمكنني تسجيل الاهتمام في أي وقت",
+          a: "نعم يمكنكم سيكون التسجيل متاحاً لغاية 15 نوفمبر 2025 علماً بأن الأولوية ستكون للحجوزات الأسبق",
+        },
       ],
       footer:
         "© " +
@@ -110,7 +118,7 @@ export default function LandingJiwarTimeshare() {
       badge1: "20-year guaranteed ownership",
       badge2: "One fixed week yearly",
       badge3: "Prices from SAR 25,000",
-      ctaPrimary: "Early Booking",
+      ctaPrimary: "Register Interest",
       ctaSecondary: "Explore details",
       cardTitle: "Tranquility & Investment Assurance",
       cardText:
@@ -160,6 +168,14 @@ export default function LandingJiwarTimeshare() {
         {
           q: "Where are the towers located?",
           a: "Jiwar 1 is directly on the Mataf; Jiwar 2 is ~10 minutes away with round‑the‑clock shuttles.",
+        },
+        {
+          q: "Are there any financial obligations when registering interest?",
+          a: "No, there are no obligations. Registering interest is only to ensure we contact you during early booking, as the number of available units will be limited.",
+        },
+        {
+          q: "Can I register interest at any time?",
+          a: "Yes, you can. Registration will be available until November 15, 2025, with priority given to earlier registrations.",
         },
       ],
       footer:
@@ -481,39 +497,27 @@ export default function LandingJiwarTimeshare() {
             {t.towersTitle}
           </h2>
           <div className="mt-8 grid md:grid-cols-2 gap-6">
-            <div className="rounded-3xl overflow-hidden border border-[#1c9a6f]/20 bg-white">
-              <div
-                className="h-48 bg-cover bg-center"
-                style={{
-                  backgroundImage: `url(/jw-1.jpg)`,
-                }}
-              />
-              <div className="p-6">
-                <h3 className="text-xl font-bold text-[#0b3d2e]">
-                  {t.tower1.title}
-                </h3>
-                <p className="text-[#0b3d2e]/80 my-3">{t.tower1.desc}</p>
-                {t.tower1.chip && (
-                  <span className="inline-flex items-center rounded-full bg-[#1c9a6f]/10 text-[#1c9a6f] px-3 py-1 text-xs font-bold">
-                    {t.tower1.chip}
-                  </span>
-                )}
-              </div>
-            </div>
-            <div className="rounded-3xl overflow-hidden border border-[#1c9a6f]/20 bg-white">
-              <div
-                className="h-48 bg-cover bg-center"
-                style={{
-                  backgroundImage: `url(/jw-2.jpeg)`,
-                }}
-              />
-              <div className="p-6">
-                <h3 className="text-xl font-bold text-[#0b3d2e]">
-                  {t.tower2.title}
-                </h3>
-                <p className="text-[#0b3d2e]/80 my-3">{t.tower2.desc}</p>
-              </div>
-            </div>
+            <TowerCard
+              images={[
+                "/jw-1.jpg",
+                "https://images.unsplash.com/photo-1564501049412-61c2a3083791?q=80&w=1200&auto=format&fit=crop",
+                "https://images.unsplash.com/photo-1591604129939-f1efa4d9f7fa?q=80&w=1200&auto=format&fit=crop",
+              ]}
+              title={t.tower1.title}
+              desc={t.tower1.desc}
+              chip={t.tower1.chip}
+              isAR={isAR}
+            />
+            <TowerCard
+              images={[
+                "/jw-2.jpeg",
+                "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?q=80&w=1200&auto=format&fit=crop",
+                "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?q=80&w=1200&auto=format&fit=crop",
+              ]}
+              title={t.tower2.title}
+              desc={t.tower2.desc}
+              isAR={isAR}
+            />
           </div>
         </div>
       </section>
@@ -553,12 +557,23 @@ export default function LandingJiwarTimeshare() {
       </section>
 
       <footer className="border-t border-[#1c9a6f]/20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-center text-xs text-[#0b3d2e]/60">
-          {t.footer}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="flex flex-col items-center gap-4">
+            <div className="flex flex-wrap items-center justify-center gap-4 text-sm text-[#0b3d2e]/70">
+              <a href="/terms" className="hover:text-[#1c9a6f] transition">
+                {isAR ? "الشروط والأحكام" : "Terms & Conditions"}
+              </a>
+              <span className="text-[#0b3d2e]/30">|</span>
+              <a href="/privacy" className="hover:text-[#1c9a6f] transition">
+                {isAR ? "سياسة الخصوصية" : "Privacy Policy"}
+              </a>
+            </div>
+            <p className="text-xs text-[#0b3d2e]/60 text-center">{t.footer}</p>
+          </div>
           {typeof window !== "undefined" &&
             new URLSearchParams(window.location.search).get("debug") ===
               "1" && (
-              <div className="mt-4">
+              <div className="mt-4 text-center">
                 <a
                   id="debug-download"
                   className="inline-flex items-center gap-2 rounded-xl border border-[#1c9a6f]/30 bg-white px-4 py-2 text-sm text-[#0b3d2e] shadow hover:bg-[#1c9a6f]/5"
@@ -591,6 +606,92 @@ function Badge({ children }: { children: React.ReactNode }) {
     <span className="inline-flex items-center rounded-full bg-[#1c9a6f]/5 px-3 py-1 text-xs border border-[white] text-[white]">
       {children}
     </span>
+  );
+}
+
+function TowerCard({
+  images,
+  title,
+  desc,
+  chip,
+  isAR,
+}: {
+  images: string[];
+  title: string;
+  desc: string;
+  chip?: string;
+  isAR: boolean;
+}) {
+  const [currentImageIndex, setCurrentImageIndex] = React.useState(0);
+
+  // In RTL (Arabic), reverse both arrows and navigation direction
+  const nextImage = () => {
+    setCurrentImageIndex((prev) =>
+      isAR
+        ? (prev - 1 + images.length) % images.length
+        : (prev + 1) % images.length
+    );
+  };
+
+  const prevImage = () => {
+    setCurrentImageIndex((prev) =>
+      isAR
+        ? (prev + 1) % images.length
+        : (prev - 1 + images.length) % images.length
+    );
+  };
+
+  return (
+    <div className="rounded-3xl overflow-hidden border border-[#1c9a6f]/20 bg-white shadow-sm">
+      <div className="relative h-48 bg-cover bg-center group">
+        <div
+          className="h-full bg-cover bg-center transition-all duration-300"
+          style={{ backgroundImage: `url(${images[currentImageIndex]})` }}
+        />
+        {images.length > 1 && (
+          <>
+            <button
+              onClick={prevImage}
+              className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-[#0b3d2e] rounded-full w-8 h-8 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity text-xl"
+              type="button"
+              aria-label={isAR ? "الصورة السابقة" : "Previous image"}
+            >
+              {isAR ? "›" : "‹"}
+            </button>
+            <button
+              onClick={nextImage}
+              className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-[#0b3d2e] rounded-full w-8 h-8 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity text-xl"
+              type="button"
+              aria-label={isAR ? "الصورة التالية" : "Next image"}
+            >
+              {isAR ? "‹" : "›"}
+            </button>
+            <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5">
+              {images.map((_, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setCurrentImageIndex(idx)}
+                  className={`w-2 h-2 rounded-full transition-all ${
+                    idx === currentImageIndex ? "bg-white w-4" : "bg-white/60"
+                  }`}
+                  type="button"
+                  aria-label={`${isAR ? "صورة" : "Image"} ${idx + 1}`}
+                />
+              ))}
+            </div>
+          </>
+        )}
+      </div>
+      <div className="p-6">
+        <h3 className="text-xl font-bold text-[#0b3d2e]">{title}</h3>
+        <p className="text-[#0b3d2e]/80 my-3">{desc}</p>
+        {chip && (
+          <span className="inline-flex items-center rounded-full bg-[#1c9a6f]/10 text-[#1c9a6f] px-3 py-1 text-xs font-bold">
+            {chip}
+          </span>
+        )}
+      </div>
+    </div>
   );
 }
 
