@@ -31,12 +31,12 @@ export default function InterestPage() {
         "سيتم التواصل معكم لتأكيد الاهتمام وإدراج معلوماتكم في قائمة الحجز المبكر",
       selectUp:
         "اختر حتى ثلاث وحدات تهمّك وأرسل بياناتك ليتواصل معك فريق جِوار.",
-      jiwar1Title: "جِوار 1",
+      jiwar1Title: "جِوار ١",
       jiwar1Desc: "إطلالات مباشرة على الحرم والكعبة المشرفة",
-      jiwar2Title: "جِوار 2",
-      jiwar2Desc: "على بُعد 10 دقائق من الحرم مع باصات ترددية",
-      maxError: "يمكنك اختيار حتى 3 خيارات فقط.",
-      maxNote: "يمكنك اختيار حتى 3 خيارات فقط.",
+      jiwar2Title: "جِوار ٢",
+      jiwar2Desc: "على بُعد ١٠ دقائق من الحرم مع باصات ترددية",
+      maxError: "يمكنك اختيار حتى ٣ خيارات فقط.",
+      maxNote: "يمكنك اختيار حتى ٣ خيارات فقط.",
       registerTitle: "سجّل اهتمامك",
       nameLabel: "الاسم *",
       emailLabel: "البريد الإلكتروني *",
@@ -147,11 +147,11 @@ export default function InterestPage() {
       tower: "Jiwar 1",
       title_ar: "استوديو — إطلالة مدينة مكة",
       title_en: "Studio — Makkah City View",
-      area_ar: "المساحة: 46 م²",
+      area_ar: "المساحة: ٤٦ م²",
       area_en: "Area: 46 m²",
-      investment_ar: "الاستثمار: يبدأ من 50,000 ريال",
+      investment_ar: "الاستثمار: يبدأ من ٥٠,٠٠٠ ريال",
       investment_en: "Investment: Starting from SAR 50,000",
-      period_ar: "المدة: 10 سنوات × 7 أيام سنويًا",
+      period_ar: "المدة: ١٠ سنوات × ٧ أيام سنويًا",
       period_en: "Period: 10 years × 7 days annually",
       images: [
         "https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?q=80&w=1200&auto=format&fit=crop",
@@ -164,11 +164,11 @@ export default function InterestPage() {
       tower: "Jiwar 1",
       title_ar: "شقة غرفة واحدة — إطلالة الحرم",
       title_en: "One Bedroom — Haram View",
-      area_ar: "المساحة: 113 م²",
+      area_ar: "المساحة: ١١٣ م²",
       area_en: "Area: 113 m²",
-      investment_ar: "الاستثمار: يبدأ من 117,000 ريال",
+      investment_ar: "الاستثمار: يبدأ من ١١٧,٠٠٠ ريال",
       investment_en: "Investment: Starting from SAR 117,000",
-      period_ar: "المدة: 10 سنوات × 7 أيام سنويًا",
+      period_ar: "المدة: ١٠ سنوات × ٧ أيام سنويًا",
       period_en: "Period: 10 years × 7 days annually",
       images: [
         "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?q=80&w=1200&auto=format&fit=crop",
@@ -181,11 +181,11 @@ export default function InterestPage() {
       tower: "Jiwar 1",
       title_ar: "شقة غرفتين — إطلالة الكعبة",
       title_en: "Two Bedrooms — Kaaba View",
-      area_ar: "المساحة: 171 م²",
+      area_ar: "المساحة: ١٧١ م²",
       area_en: "Area: 171 m²",
-      investment_ar: "الاستثمار: يبدأ من 170,000 ريال",
+      investment_ar: "الاستثمار: يبدأ من ١٧٠,٠٠٠ ريال",
       investment_en: "Investment: Starting from SAR 170,000",
-      period_ar: "المدة: 10 سنوات × 7 أيام سنويًا",
+      period_ar: "المدة: ١٠ سنوات × ٧ أيام سنويًا",
       period_en: "Period: 10 years × 7 days annually",
       images: [
         "https://images.unsplash.com/photo-1494526585095-c41746248156?q=80&w=1200&auto=format&fit=crop",
@@ -200,11 +200,11 @@ export default function InterestPage() {
       tower: "Jiwar 2",
       title_ar: "غرفة مزدوجة",
       title_en: "Double Room",
-      area_ar: "المساحة: 26 م²",
+      area_ar: "المساحة: ٢٦ م²",
       area_en: "Area: 26 m²",
-      investment_ar: "الاستثمار: يبدأ من 25,000 ريال",
+      investment_ar: "الاستثمار: يبدأ من ٢٥,٠٠٠ ريال",
       investment_en: "Investment: Starting from SAR 25,000",
-      period_ar: "المدة: 20 سنة × 7 أيام سنويًا",
+      period_ar: "المدة: ٢٠ سنة × ٧ أيام سنويًا",
       period_en: "Period: 20 years × 7 days annually",
       images: [
         "https://images.unsplash.com/photo-1560066984-138dadb4c035?q=80&w=1200&auto=format&fit=crop",
@@ -217,11 +217,11 @@ export default function InterestPage() {
       tower: "Jiwar 2",
       title_ar: "غرفة بثلاثة أسِرّة منفصلة",
       title_en: "Three Twin Beds Room",
-      area_ar: "المساحة: 26 م²",
+      area_ar: "المساحة: ٢٦ م²",
       area_en: "Area: 26 m²",
-      investment_ar: "الاستثمار: 30,000 ريال",
+      investment_ar: "الاستثمار: ٣٠,٠٠٠ ريال",
       investment_en: "Investment: SAR 30,000",
-      period_ar: "المدة: 20 سنة × 7 أيام سنويًا",
+      period_ar: "المدة: ٢٠ سنة × ٧ أيام سنويًا",
       period_en: "Period: 20 years × 7 days annually",
       images: [
         "https://images.unsplash.com/photo-1595526114035-0d45ed16cfbf?q=80&w=1200&auto=format&fit=crop",
@@ -232,13 +232,13 @@ export default function InterestPage() {
     {
       id: "j2-family-studio",
       tower: "Jiwar 2",
-      title_ar: "استوديو عائلي — غرفتان (5 أسِرّة)",
+      title_ar: "استوديو عائلي — غرفتان (٥ أسِرّة)",
       title_en: "Family Studio — Two Rooms (5 Beds)",
-      area_ar: "المساحة: 48 م²",
+      area_ar: "المساحة: ٤٨ م²",
       area_en: "Area: 48 m²",
-      investment_ar: "الاستثمار: 46,000 ريال",
+      investment_ar: "الاستثمار: ٤٦,٠٠٠ ريال",
       investment_en: "Investment: SAR 46,000",
-      period_ar: "المدة: 20 سنة × 7 أيام سنويًا",
+      period_ar: "المدة: ٢٠ سنة × ٧ أيام سنويًا",
       period_en: "Period: 20 years × 7 days annually",
       images: [
         "https://images.unsplash.com/photo-1540518614846-7eded433c457?q=80&w=1200&auto=format&fit=crop",
@@ -772,7 +772,13 @@ export default function InterestPage() {
             </div>
             <div className="flex items-center justify-between">
               <div className="text-sm text-[#0b3d2e]/70">
-                {t.selectedCount} <b>{selected.length}</b> / 3
+                {t.selectedCount}{" "}
+                <b>
+                  {isAR
+                    ? ["٠", "١", "٢", "٣"][selected.length]
+                    : selected.length}
+                </b>{" "}
+                / {isAR ? "٣" : "3"}
               </div>
               <button
                 type="submit"
