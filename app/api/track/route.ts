@@ -28,11 +28,29 @@ export async function POST(request: NextRequest) {
       timestamp: new Date().toISOString(),
     };
 
-    // Generate unique filename
-    const filename = `analytics-${analyticsEntry.id}.json`;
+    // Generate filename with date to batch by day
+    const today = new Date().toISOString().split("T")[0];
+    const filename = `analytics-${today}.json`;
 
-    // Store in Vercel Blob
-    const blob = await put(filename, JSON.stringify(analyticsEntry, null, 2), {
+    // Try to get existing data for today
+    let existingData = [];
+    try {
+      const existingBlob = await fetch(
+        `https://timemarketing-blob.vercel-storage.com/${filename}`
+      );
+      if (existingBlob.ok) {
+        existingData = await existingBlob.json();
+      }
+    } catch (error) {
+      // File doesn't exist yet, start with empty array
+      console.log("No existing data for today, starting fresh");
+    }
+
+    // Add new entry to existing data
+    existingData.push(analyticsEntry);
+
+    // Store batched data in Vercel Blob
+    const blob = await put(filename, JSON.stringify(existingData, null, 2), {
       access: "public",
       contentType: "application/json",
     });
