@@ -3,6 +3,18 @@ import { list } from "@vercel/blob";
 
 export async function GET(request: NextRequest) {
   try {
+    // Check if Blob token is configured
+    if (!process.env.BLOB_READ_WRITE_TOKEN) {
+      console.warn(
+        "BLOB_READ_WRITE_TOKEN not configured. Returning empty logs."
+      );
+      return NextResponse.json({
+        success: true,
+        logs: [],
+        count: 0,
+      });
+    }
+
     console.log("Reading analytics from Vercel Blob...");
 
     // List all blobs with analytics prefix

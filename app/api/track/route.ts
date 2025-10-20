@@ -3,6 +3,20 @@ import { put } from "@vercel/blob";
 
 export async function POST(request: NextRequest) {
   try {
+    // Check if Blob token is configured
+    if (!process.env.BLOB_READ_WRITE_TOKEN) {
+      console.warn(
+        "BLOB_READ_WRITE_TOKEN not configured. Analytics will not be stored."
+      );
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Blob storage not configured",
+        },
+        { status: 503 }
+      );
+    }
+
     const body = await request.json();
 
     // Debug: Log the incoming analytics data
