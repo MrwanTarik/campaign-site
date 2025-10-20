@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { list } from "@vercel/blob";
 
-// Simple in-memory cache
+// In-memory cache to reduce blob LIST operations
 let cache: {
   data: any[] | null;
   timestamp: number;
@@ -9,15 +9,15 @@ let cache: {
 } = {
   data: null,
   timestamp: 0,
-  ttl: 5 * 60 * 1000, // 5 minutes
+  ttl: 5 * 60 * 1000, // 5 minutes cache
 };
 
 export async function GET(request: NextRequest) {
   try {
-    // Check cache first
+    // Check if we have valid cached data
     const now = Date.now();
     if (cache.data && now - cache.timestamp < cache.ttl) {
-      console.log("Returning cached analytics data");
+      console.log("Returning cached analytics data (reduces blob operations)");
       return NextResponse.json({
         success: true,
         logs: cache.data,

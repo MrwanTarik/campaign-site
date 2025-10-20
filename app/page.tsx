@@ -279,7 +279,7 @@ export default function LandingJiwarTimeshare() {
     const flush = (final = false) => {
       ctx.secondsOnPage = Math.round((Date.now() - ctx.startedAt) / 1000);
 
-      // Send analytics less frequently - every 60 seconds or on final flush
+      // Send analytics every 60 seconds or on final flush to reduce blob operations
       const shouldSend = final || ctx.secondsOnPage >= 60;
 
       if (!shouldSend) {
@@ -326,7 +326,7 @@ export default function LandingJiwarTimeshare() {
 
     const onBeforeUnload = () => flush(true);
     window.addEventListener("beforeunload", onBeforeUnload);
-    const interval = setInterval(() => flush(false), 60000);
+    const interval = setInterval(() => flush(false), 60000); // Every 60 seconds
     ctx.events.push({ t: Date.now(), type: "page_view" });
 
     // Add manual trigger for testing
@@ -335,7 +335,7 @@ export default function LandingJiwarTimeshare() {
       flush(true);
     };
 
-    // Send initial analytics after 30 seconds
+    // Send initial analytics after 30 seconds to avoid immediate operations
     setTimeout(() => flush(false), 30000);
 
     return () => {
