@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { put, head } from "@vercel/blob";
+import { put } from "@vercel/blob";
 
 export async function POST(request: NextRequest) {
   try {
@@ -28,46 +28,21 @@ export async function POST(request: NextRequest) {
       timestamp: new Date().toISOString(),
     };
 
-    // Generate daily batch filename (reduces operations by ~90%)
-    const today = new Date().toISOString().split("T")[0];
-    const filename = `analytics-batch-${today}.json`;
+    // Generate unique filename
+    const filename = `analytics-${analyticsEntry.id}.json`;
 
-    // Try to fetch existing data for today
-    let existingData: any[] = [];
-    try {
-      const blobUrl = `${
-        process.env.BLOB_READ_WRITE_TOKEN?.split("vercel_blob_rw_")[0] || ""
-      }${filename}`;
-      const response = await fetch(blobUrl);
-      if (response.ok) {
-        const text = await response.text();
-        if (text) {
-          existingData = JSON.parse(text);
-        }
-      }
-    } catch (error) {
-      // File doesn't exist yet or error reading, start fresh
-      console.log("Starting new batch file for today");
-    }
-
-    // Add new entry to the batch
-    existingData.push(analyticsEntry);
-
-    // Store batched data (overwrites existing file with updated data)
-    const blob = await put(filename, JSON.stringify(existingData, null, 2), {
+    // Store in Vercel Blob
+    const blob = await put(filename, JSON.stringify(analyticsEntry, null, 2), {
       access: "public",
       contentType: "application/json",
     });
 
-    console.log(
-      `Analytics data batched in Vercel Blob: ${blob.url} (${existingData.length} entries today)`
-    );
+    console.log("Analytics data stored in Vercel Blob:", blob.url);
 
     return NextResponse.json({
       success: true,
       message: "Analytics data stored successfully",
       blobUrl: blob.url,
-      batchSize: existingData.length,
     });
   } catch (error) {
     console.error("Error storing analytics data:", error);
