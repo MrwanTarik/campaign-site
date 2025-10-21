@@ -19,6 +19,8 @@ interface AnalyticsData {
   path: string;
   ua: string;
   ts: string;
+  exitedAt?: string;
+  sessionEnded?: boolean;
   lang?: string;
   pageName?: string;
   type?: string;
@@ -136,6 +138,8 @@ export default function LogsPage() {
       submitted: log?.submitted || undefined,
       interestSource: log?.interestSource || undefined,
       sourceTimestamp: log?.sourceTimestamp || undefined,
+      exitedAt: log?.exitedAt || undefined,
+      sessionEnded: log?.sessionEnded || undefined,
     }));
   };
 
@@ -778,7 +782,7 @@ export default function LogsPage() {
                             {selectedLog.ua.split(" ")[0]}
                           </span>
                         </div>
-                        <div className="flex justify-between items-center py-2">
+                        <div className="flex justify-between items-center py-2 border-b border-[#1c9a6f]/10">
                           <span className="text-sm text-[#0b3d2e]/60">
                             التاريخ والوقت
                           </span>
@@ -786,6 +790,32 @@ export default function LogsPage() {
                             {formatDate(selectedLog.ts)}
                           </span>
                         </div>
+                        {selectedLog.exitedAt && (
+                          <div className="flex justify-between items-center py-2 border-b border-[#1c9a6f]/10">
+                            <span className="text-sm text-[#0b3d2e]/60">
+                              وقت المغادرة
+                            </span>
+                            <span className="text-sm text-[#0b3d2e]">
+                              {formatDate(selectedLog.exitedAt)}
+                            </span>
+                          </div>
+                        )}
+                        {selectedLog.sessionEnded !== undefined && (
+                          <div className="flex justify-between items-center py-2">
+                            <span className="text-sm text-[#0b3d2e]/60">
+                              حالة الجلسة
+                            </span>
+                            <span
+                              className={`text-sm font-semibold px-2 py-1 rounded ${
+                                selectedLog.sessionEnded
+                                  ? "bg-red-100 text-red-700"
+                                  : "bg-green-100 text-green-700"
+                              }`}
+                            >
+                              {selectedLog.sessionEnded ? "منتهية" : "نشطة"}
+                            </span>
+                          </div>
+                        )}
                       </div>
                     </div>
 

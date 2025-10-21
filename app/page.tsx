@@ -369,6 +369,8 @@ export default function LandingJiwarTimeshare() {
         lang: ctx.lang,
         pageName: ctx.pageName,
         ts: new Date().toISOString(),
+        exitedAt: final ? new Date().toISOString() : undefined,
+        sessionEnded: final,
       };
 
       // Debug: Log the payload being sent

@@ -568,6 +568,7 @@ export default function InterestPage() {
           : "",
       ua: typeof navigator !== "undefined" ? navigator.userAgent : "",
       lang: isAR ? "ar" : "en",
+      sessionEnded: false,
     };
     sendRecord(payload);
     setSubmitted(true);
@@ -606,6 +607,7 @@ export default function InterestPage() {
         guid,
         sessionId,
         ts: new Date().toISOString(),
+        exitedAt: new Date().toISOString(),
         ip: ipInfo.ip,
         country: ipInfo.country,
         secondsOnPage,
@@ -625,6 +627,7 @@ export default function InterestPage() {
             : "",
         ua: typeof navigator !== "undefined" ? navigator.userAgent : "",
         lang: isAR ? "ar" : "en",
+        sessionEnded: true,
       };
       sendRecord(payload);
     };
