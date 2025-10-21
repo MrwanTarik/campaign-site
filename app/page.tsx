@@ -212,6 +212,10 @@ export default function LandingJiwarTimeshare() {
       console.log("Tracking disabled for this page");
       return;
     }
+
+    // Flag to prevent sending data twice
+    let dataSent = false;
+
     const getOrCreateGUID = () => {
       const k = "jiwar_guid";
       let id = localStorage.getItem(k);
@@ -364,10 +368,13 @@ export default function LandingJiwarTimeshare() {
     );
 
     const flush = (final = false) => {
-      // Only send data when user is leaving (final = true)
-      if (!final) {
+      // Only send data when user is leaving (final = true) and not already sent
+      if (!final || dataSent) {
         return;
       }
+
+      // Mark as sent to prevent duplicates
+      dataSent = true;
 
       ctx.secondsOnPage = Math.round((Date.now() - ctx.startedAt) / 1000);
 
@@ -466,6 +473,8 @@ export default function LandingJiwarTimeshare() {
       console.log("- Menu clicks:", ctx.menuClicks);
       console.log("- FAQ opened:", ctx.faqOpened);
       console.log("- Events:", ctx.events);
+      // Reset flag for manual testing
+      dataSent = false;
       flush(true);
     };
 

@@ -606,10 +606,16 @@ export default function InterestPage() {
   };
 
   React.useEffect(() => {
+    // Flag to prevent sending data twice
+    let dataSent = false;
+
     const guid = getOrCreateGUID();
     const sessionId = getOrCreateSessionId();
     const onBeforeUnload = () => {
-      if (submitted) return;
+      if (submitted || dataSent) return;
+
+      // Mark as sent to prevent duplicates
+      dataSent = true;
       const secondsOnPage = Math.round(
         (Date.now() - startedAtRef.current) / 1000
       );
