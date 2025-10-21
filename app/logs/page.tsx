@@ -41,6 +41,21 @@ export default function LogsPage() {
   const [error, setError] = useState<string | null>(null);
   const [selectedLog, setSelectedLog] = useState<AnalyticsData | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+  const [showCleanupConfirm, setShowCleanupConfirm] = useState(false);
+  const [cleaning, setCleaning] = useState(false);
+
+  // Prevent tracking on the logs page
+  useEffect(() => {
+    // Mark this page as a tracking-excluded page
+    if (typeof window !== "undefined") {
+      (window as any).__JIWAR_NO_TRACKING__ = true;
+    }
+    return () => {
+      if (typeof window !== "undefined") {
+        (window as any).__JIWAR_NO_TRACKING__ = false;
+      }
+    };
+  }, []);
 
   useEffect(() => {
     fetchLogs();
@@ -74,6 +89,38 @@ export default function LogsPage() {
     } finally {
       setLoading(false);
       setRefreshing(false);
+    }
+  };
+
+  const handleCleanup = async () => {
+    if (!showCleanupConfirm) {
+      setShowCleanupConfirm(true);
+      return;
+    }
+
+    try {
+      setCleaning(true);
+      const response = await fetch("/api/cleanup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "delete_all",
+          confirmationCode: "DELETE_ALL_LOGS_CONFIRM",
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to cleanup logs");
+      }
+
+      const data = await response.json();
+      alert(`تم حذف ${data.count} سجل بنجاح`);
+      setShowCleanupConfirm(false);
+      fetchLogs(true);
+    } catch (err) {
+      alert("فشل في حذف السجلات: " + (err instanceof Error ? err.message : ""));
+    } finally {
+      setCleaning(false);
     }
   };
 
@@ -262,6 +309,43 @@ export default function LogsPage() {
                 </svg>
                 {refreshing ? "جاري التحديث..." : "تحديث"}
               </button>
+              {showCleanupConfirm ? (
+                <button
+                  onClick={handleCleanup}
+                  disabled={cleaning}
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition-colors font-medium disabled:opacity-50"
+                >
+                  {cleaning ? "جاري الحذف..." : "تأكيد الحذف"}
+                </button>
+              ) : (
+                <button
+                  onClick={handleCleanup}
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-red-600/30 bg-white text-red-600 hover:bg-red-50 transition-colors font-medium"
+                >
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                    />
+                  </svg>
+                  حذف جميع السجلات
+                </button>
+              )}
+              {showCleanupConfirm && (
+                <button
+                  onClick={() => setShowCleanupConfirm(false)}
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-[#1c9a6f]/30 bg-white text-[#0b3d2e] hover:bg-[#1c9a6f]/5 transition-colors font-medium"
+                >
+                  إلغاء
+                </button>
+              )}
               <a
                 href="/"
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#1c9a6f] text-white hover:bg-[#1c9a6f]/90 transition-colors font-medium"

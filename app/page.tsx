@@ -204,6 +204,14 @@ export default function LandingJiwarTimeshare() {
     typeof window !== "undefined" &&
     new URLSearchParams(window.location.search).get("debug") === "1";
   React.useEffect(() => {
+    // Skip tracking if this is the logs page or tracking is disabled
+    if (
+      typeof window !== "undefined" &&
+      (window as any).__JIWAR_NO_TRACKING__
+    ) {
+      console.log("Tracking disabled for this page");
+      return;
+    }
     const getOrCreateGUID = () => {
       const k = "jiwar_guid";
       let id = localStorage.getItem(k);
@@ -296,6 +304,7 @@ export default function LandingJiwarTimeshare() {
             if (id && !ctx.sectionsViewed.has(id)) {
               ctx.sectionsViewed.add(id);
               ctx.events.push({ t: Date.now(), type: "section_view", id });
+              console.log("Section viewed:", id);
             }
           }
         });
@@ -304,7 +313,10 @@ export default function LandingJiwarTimeshare() {
     );
     secIds.forEach((id) => {
       const el = document.getElementById(id);
-      if (el) observer.observe(el);
+      if (el) {
+        observer.observe(el);
+        console.log("Observing section:", id);
+      }
     });
 
     const menu = document.querySelector("nav");
@@ -312,12 +324,24 @@ export default function LandingJiwarTimeshare() {
       const a = (e.target as HTMLElement).closest("a");
       if (!a) return;
       const label = a.textContent?.trim() || a.getAttribute("href");
+      const href = a.getAttribute("href") || "";
+
+      // Add to navClicks for navigation items
+      ctx.navClicks.push({
+        t: Date.now(),
+        label,
+        href: href,
+      });
+
+      // Also add to menuClicks for backward compatibility
       ctx.menuClicks.push({
         t: Date.now(),
         label,
-        href: a.getAttribute("href"),
+        href: href,
       });
-      ctx.events.push({ t: Date.now(), type: "menu_click", label });
+
+      ctx.events.push({ t: Date.now(), type: "nav_click", label, href });
+      console.log("Navigation clicked:", label, href);
     };
     if (menu) menu.addEventListener("click", onMenuClick);
 
@@ -329,11 +353,22 @@ export default function LandingJiwarTimeshare() {
       if (ev.currentTarget.open) {
         ctx.faqOpened.push(q);
         ctx.events.push({ t: Date.now(), type: "faq_open", q });
+        console.log("FAQ opened:", q);
       }
     };
     faqDetails.forEach((d) => d.addEventListener("toggle", onToggle));
+    console.log(
+      "FAQ tracking initialized, found",
+      faqDetails.length,
+      "FAQ items"
+    );
 
     const flush = (final = false) => {
+      // Only send data when user is leaving (final = true)
+      if (!final) {
+        return;
+      }
+
       ctx.secondsOnPage = Math.round((Date.now() - ctx.startedAt) / 1000);
 
       // Calculate active time
@@ -342,13 +377,6 @@ export default function LandingJiwarTimeshare() {
         currentActiveTime += Date.now() - activeTimeStart;
       }
       ctx.activeSecondsOnPage = Math.round(currentActiveTime / 1000);
-
-      // Send analytics more frequently - every 10 seconds or on final flush
-      const shouldSend = final || ctx.secondsOnPage >= 10;
-
-      if (!shouldSend) {
-        return; // Skip sending if not enough time has passed
-      }
 
       const payload = {
         guid: ctx.guid,
@@ -395,9 +423,12 @@ export default function LandingJiwarTimeshare() {
       }
     };
 
-    const onBeforeUnload = () => flush(true);
+    const onBeforeUnload = () => {
+      console.log("User is leaving - sending final analytics");
+      flush(true);
+    };
+
     window.addEventListener("beforeunload", onBeforeUnload);
-    const interval = setInterval(() => flush(false), 10000);
     ctx.events.push({ t: Date.now(), type: "page_view" });
 
     // Add manual trigger for testing
@@ -406,11 +437,9 @@ export default function LandingJiwarTimeshare() {
       flush(true);
     };
 
-    // Send initial analytics after 3 seconds
-    setTimeout(() => flush(false), 3000);
-
     return () => {
-      clearInterval(interval);
+      // Send final data when component unmounts (navigation away)
+      flush(true);
       window.removeEventListener("beforeunload", onBeforeUnload);
       document.removeEventListener("visibilitychange", handleVisibilityChange);
       if (menu) menu.removeEventListener("click", onMenuClick);
