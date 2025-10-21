@@ -230,6 +230,11 @@ export default function LandingJiwarTimeshare() {
     const guid = getOrCreateGUID();
     const sessionId = getOrCreateSessionId();
 
+    // Track active time only (when tab is visible)
+    let activeTimeStart = Date.now();
+    let totalActiveTime = 0;
+    let isTabActive = !document.hidden;
+
     const ctx: any = {
       guid,
       sessionId,
@@ -237,9 +242,13 @@ export default function LandingJiwarTimeshare() {
       country: null,
       startedAt: Date.now(),
       secondsOnPage: 0,
+      activeSecondsOnPage: 0,
       sectionsViewed: new Set<string>(),
+      navClicks: [],
       menuClicks: [],
       faqOpened: [],
+      jiwarCardClicks: [],
+      ctaClicks: [],
       events: [],
       path:
         typeof location !== "undefined"
@@ -247,6 +256,7 @@ export default function LandingJiwarTimeshare() {
           : "",
       ua: typeof navigator !== "undefined" ? navigator.userAgent : "",
       lang: isAR ? "ar" : "en",
+      pageName: "landing",
     };
 
     fetch("https://ipapi.co/json/")
@@ -258,6 +268,24 @@ export default function LandingJiwarTimeshare() {
         }
       })
       .catch(() => {});
+
+    // Track tab visibility changes
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        // Tab became inactive
+        if (isTabActive) {
+          totalActiveTime += Date.now() - activeTimeStart;
+          isTabActive = false;
+        }
+      } else {
+        // Tab became active
+        if (!isTabActive) {
+          activeTimeStart = Date.now();
+          isTabActive = true;
+        }
+      }
+    };
+    document.addEventListener("visibilitychange", handleVisibilityChange);
 
     const secIds = ["features", "jiwar", "investment", "faq"];
     const observer = new IntersectionObserver(
@@ -308,6 +336,13 @@ export default function LandingJiwarTimeshare() {
     const flush = (final = false) => {
       ctx.secondsOnPage = Math.round((Date.now() - ctx.startedAt) / 1000);
 
+      // Calculate active time
+      let currentActiveTime = totalActiveTime;
+      if (isTabActive) {
+        currentActiveTime += Date.now() - activeTimeStart;
+      }
+      ctx.activeSecondsOnPage = Math.round(currentActiveTime / 1000);
+
       // Send analytics more frequently - every 10 seconds or on final flush
       const shouldSend = final || ctx.secondsOnPage >= 10;
 
@@ -321,13 +356,18 @@ export default function LandingJiwarTimeshare() {
         ip: ctx.ip,
         country: ctx.country,
         secondsOnPage: ctx.secondsOnPage,
+        activeSecondsOnPage: ctx.activeSecondsOnPage,
         sectionsViewed: Array.from(ctx.sectionsViewed as Set<string>),
+        navClicks: ctx.navClicks,
         menuClicks: ctx.menuClicks,
         faqOpened: ctx.faqOpened,
+        jiwarCardClicks: ctx.jiwarCardClicks,
+        ctaClicks: ctx.ctaClicks,
         events: ctx.events,
         path: ctx.path,
         ua: ctx.ua,
         lang: ctx.lang,
+        pageName: ctx.pageName,
         ts: new Date().toISOString(),
       };
 
@@ -370,6 +410,7 @@ export default function LandingJiwarTimeshare() {
     return () => {
       clearInterval(interval);
       window.removeEventListener("beforeunload", onBeforeUnload);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
       if (menu) menu.removeEventListener("click", onMenuClick);
       faqDetails.forEach((d) => d.removeEventListener("toggle", onToggle));
       observer.disconnect();
@@ -425,6 +466,13 @@ export default function LandingJiwarTimeshare() {
           <div className="flex items-center gap-2">
             <a
               href="/interest"
+              onClick={() => {
+                sessionStorage.setItem("jiwar_interest_source", "header_cta");
+                sessionStorage.setItem(
+                  "jiwar_interest_source_timestamp",
+                  Date.now().toString()
+                );
+              }}
               className="inline-flex items-center justify-center rounded-2xl border border-[#1c9a6f]/40 bg-[#1c9a6f]/10 px-4 py-2 text-sm font-semibold text-[#0b3d2e] hover:bg-[#1c9a6f]/20 transition shadow-sm"
             >
               {t.ctaPrimary}
@@ -465,6 +513,16 @@ export default function LandingJiwarTimeshare() {
               <div className="mt-8 flex items-center gap-3">
                 <a
                   href="/interest"
+                  onClick={() => {
+                    sessionStorage.setItem(
+                      "jiwar_interest_source",
+                      "hero_cta_primary"
+                    );
+                    sessionStorage.setItem(
+                      "jiwar_interest_source_timestamp",
+                      Date.now().toString()
+                    );
+                  }}
                   className="inline-flex items-center justify-center rounded-2xl bg-[#1c9a6f] text-white px-6 py-3 font-bold hover:brightness-110 transition shadow-lg shadow-[#1c9a6f]/20"
                 >
                   {t.ctaPrimary}
@@ -560,6 +618,16 @@ export default function LandingJiwarTimeshare() {
           </ul>
           <a
             href="/interest"
+            onClick={() => {
+              sessionStorage.setItem(
+                "jiwar_interest_source",
+                "investment_section_cta"
+              );
+              sessionStorage.setItem(
+                "jiwar_interest_source_timestamp",
+                Date.now().toString()
+              );
+            }}
             className="inline-flex items-center justify-center mt-6 rounded-2xl bg-[#1c9a6f] text-white px-6 py-3 font-bold hover:brightness-110 transition shadow-lg shadow-[#1c9a6f]/20"
           >
             {t.ctaPrimary}
@@ -800,9 +868,19 @@ function TowerCard({
     return () => clearInterval(id);
   }, [images, isAR]);
 
+  const handleCardClick = (e: React.MouseEvent) => {
+    // Store the click source in sessionStorage
+    sessionStorage.setItem("jiwar_interest_source", `jiwar_card_${title}`);
+    sessionStorage.setItem(
+      "jiwar_interest_source_timestamp",
+      Date.now().toString()
+    );
+  };
+
   return (
     <a
       href="/interest"
+      onClick={handleCardClick}
       className="block rounded-3xl overflow-hidden border border-[#1c9a6f]/20 bg-white shadow-sm hover:shadow-lg transition-shadow cursor-pointer"
     >
       <div className="relative h-48 bg-cover bg-center group">

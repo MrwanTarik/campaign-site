@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { put } from "@vercel/blob";
+import { put, list } from "@vercel/blob";
 
 export async function POST(request: NextRequest) {
   try {
@@ -40,10 +40,17 @@ export async function POST(request: NextRequest) {
       ...body,
       id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       timestamp: new Date().toISOString(),
+      serverIP,
     };
 
-    // Generate unique filename
-    const filename = `analytics-${analyticsEntry.id}.json`;
+    // Try to consolidate with existing session data
+    const sessionId = body.sessionId || body.guid;
+    let filename = `analytics-${analyticsEntry.id}.json`;
+
+    if (sessionId) {
+      // Use session-based filename for easier consolidation
+      filename = `session-${sessionId}-${analyticsEntry.id}.json`;
+    }
 
     // Store in Vercel Blob
     const blob = await put(filename, JSON.stringify(analyticsEntry, null, 2), {
@@ -57,6 +64,7 @@ export async function POST(request: NextRequest) {
       success: true,
       message: "Analytics data stored successfully",
       blobUrl: blob.url,
+      sessionId: sessionId,
     });
   } catch (error) {
     console.error("Error storing analytics data:", error);

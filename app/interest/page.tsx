@@ -111,10 +111,16 @@ export default function InterestPage() {
   const startedAtRef = React.useRef<number>(Date.now());
   const [submitted, setSubmitted] = React.useState(false);
 
+  // Track active time only
+  const activeTimeStartRef = React.useRef<number>(Date.now());
+  const totalActiveTimeRef = React.useRef<number>(0);
+  const isTabActiveRef = React.useRef<boolean>(true);
+
   const [ipInfo, setIpInfo] = React.useState<{
     ip: string | null;
     country: string | null;
   }>({ ip: null, country: null });
+
   React.useEffect(() => {
     fetch("https://ipapi.co/json/")
       .then((r) => (r.ok ? r.json() : null))
@@ -126,6 +132,27 @@ export default function InterestPage() {
           });
       })
       .catch(() => {});
+
+    // Track tab visibility for active time
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        if (isTabActiveRef.current) {
+          totalActiveTimeRef.current += Date.now() - activeTimeStartRef.current;
+          isTabActiveRef.current = false;
+        }
+      } else {
+        if (!isTabActiveRef.current) {
+          activeTimeStartRef.current = Date.now();
+          isTabActiveRef.current = true;
+        }
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
   }, []);
 
   type Option = {
@@ -503,6 +530,21 @@ export default function InterestPage() {
     const secondsOnPage = Math.round(
       (Date.now() - startedAtRef.current) / 1000
     );
+
+    // Calculate active time
+    let currentActiveTime = totalActiveTimeRef.current;
+    if (isTabActiveRef.current) {
+      currentActiveTime += Date.now() - activeTimeStartRef.current;
+    }
+    const activeSecondsOnPage = Math.round(currentActiveTime / 1000);
+
+    // Get interest source
+    const interestSource =
+      sessionStorage.getItem("jiwar_interest_source") || "direct";
+    const sourceTimestamp = sessionStorage.getItem(
+      "jiwar_interest_source_timestamp"
+    );
+
     const payload = {
       type: "rooms_submit",
       guid,
@@ -511,14 +553,21 @@ export default function InterestPage() {
       ip: ipInfo.ip,
       country: ipInfo.country,
       secondsOnPage,
+      activeSecondsOnPage,
       selectedOptions: selected,
+      selectedJiwar1: selected.filter((id) => id.startsWith("j1-")),
+      selectedJiwar2: selected.filter((id) => id.startsWith("j2-")),
       form,
       submitted: true,
+      interestSource,
+      sourceTimestamp,
+      pageName: "interest",
       path:
         typeof location !== "undefined"
           ? location.pathname + location.search
           : "",
       ua: typeof navigator !== "undefined" ? navigator.userAgent : "",
+      lang: isAR ? "ar" : "en",
     };
     sendRecord(payload);
     setSubmitted(true);
@@ -533,6 +582,25 @@ export default function InterestPage() {
       const secondsOnPage = Math.round(
         (Date.now() - startedAtRef.current) / 1000
       );
+
+      // Calculate active time
+      let currentActiveTime = totalActiveTimeRef.current;
+      if (isTabActiveRef.current) {
+        currentActiveTime += Date.now() - activeTimeStartRef.current;
+      }
+      const activeSecondsOnPage = Math.round(currentActiveTime / 1000);
+
+      // Get interest source
+      const interestSource =
+        sessionStorage.getItem("jiwar_interest_source") || "direct";
+      const sourceTimestamp = sessionStorage.getItem(
+        "jiwar_interest_source_timestamp"
+      );
+
+      // Check if form has any data
+      const formHasData =
+        form.name || form.email || form.country || form.phone || form.notes;
+
       const payload = {
         type: "rooms_visit",
         guid,
@@ -541,14 +609,22 @@ export default function InterestPage() {
         ip: ipInfo.ip,
         country: ipInfo.country,
         secondsOnPage,
+        activeSecondsOnPage,
         selectedOptions: selected,
+        selectedJiwar1: selected.filter((id) => id.startsWith("j1-")),
+        selectedJiwar2: selected.filter((id) => id.startsWith("j2-")),
         form,
+        formHasData,
         submitted: false,
+        interestSource,
+        sourceTimestamp,
+        pageName: "interest",
         path:
           typeof location !== "undefined"
             ? location.pathname + location.search
             : "",
         ua: typeof navigator !== "undefined" ? navigator.userAgent : "",
+        lang: isAR ? "ar" : "en",
       };
       sendRecord(payload);
     };
@@ -564,6 +640,7 @@ export default function InterestPage() {
     ipInfo,
     getOrCreateGUID,
     getOrCreateSessionId,
+    isAR,
   ]);
 
   return (
