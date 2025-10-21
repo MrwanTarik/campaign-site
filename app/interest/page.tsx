@@ -501,12 +501,23 @@ export default function InterestPage() {
 
   const sendRecord = (payload: any) => {
     try {
+      console.log("=== SENDING INTEREST PAGE ANALYTICS ===");
+      console.log("Selected options:", payload.selectedOptions);
+      console.log("Selected Jiwar 1:", payload.selectedJiwar1);
+      console.log("Selected Jiwar 2:", payload.selectedJiwar2);
+      console.log("Form data:", payload.form);
+      console.log("Form has data:", payload.formHasData);
+      console.log("Full payload:", payload);
+
       const blob = new Blob([JSON.stringify(payload)], {
         type: "application/json",
       });
       const ok =
         (navigator as any).sendBeacon &&
         (navigator as any).sendBeacon("/api/track", blob);
+
+      console.log("Send beacon result:", ok);
+
       if (!ok && DEBUG) {
         const a = document.getElementById("rooms-debug-download");
         if (a) {
@@ -515,7 +526,9 @@ export default function InterestPage() {
           a.setAttribute("download", `rooms-${payload.guid}.json`);
         }
       }
-    } catch {}
+    } catch (error) {
+      console.error("Error sending analytics:", error);
+    }
   };
 
   const onSubmit = (e: React.FormEvent) => {

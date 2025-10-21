@@ -402,7 +402,12 @@ export default function LandingJiwarTimeshare() {
       };
 
       // Debug: Log the payload being sent
-      console.log("Sending analytics payload:", payload);
+      console.log("=== SENDING ANALYTICS PAYLOAD ===");
+      console.log("Sections viewed:", payload.sectionsViewed);
+      console.log("Nav clicks:", payload.navClicks);
+      console.log("Menu clicks:", payload.menuClicks);
+      console.log("FAQ opened:", payload.faqOpened);
+      console.log("Full payload:", payload);
 
       try {
         const blob = new Blob([JSON.stringify(payload)], {
@@ -431,10 +436,30 @@ export default function LandingJiwarTimeshare() {
     window.addEventListener("beforeunload", onBeforeUnload);
     ctx.events.push({ t: Date.now(), type: "page_view" });
 
-    // Add manual trigger for testing
+    // Add manual trigger for testing and debugging
     (window as any).triggerAnalytics = () => {
-      console.log("Manually triggering analytics...");
+      console.log("=== MANUALLY TRIGGERING ANALYTICS ===");
+      console.log("Current data:");
+      console.log("- Sections viewed:", Array.from(ctx.sectionsViewed));
+      console.log("- Nav clicks:", ctx.navClicks);
+      console.log("- Menu clicks:", ctx.menuClicks);
+      console.log("- FAQ opened:", ctx.faqOpened);
+      console.log("- Events:", ctx.events);
       flush(true);
+    };
+
+    // Add debug info display
+    (window as any).showTrackingData = () => {
+      console.log("=== CURRENT TRACKING DATA ===");
+      console.log("Sections viewed:", Array.from(ctx.sectionsViewed));
+      console.log("Nav clicks:", ctx.navClicks);
+      console.log("Menu clicks:", ctx.menuClicks);
+      console.log("FAQ opened:", ctx.faqOpened);
+      console.log("Events:", ctx.events);
+      console.log(
+        "Seconds on page:",
+        Math.round((Date.now() - ctx.startedAt) / 1000)
+      );
     };
 
     return () => {
@@ -820,7 +845,27 @@ export default function LandingJiwarTimeshare() {
           {typeof window !== "undefined" &&
             new URLSearchParams(window.location.search).get("debug") ===
               "1" && (
-              <div className="mt-4 text-center">
+              <div className="mt-4 text-center space-x-2">
+                <button
+                  onClick={() => {
+                    if (typeof window !== "undefined") {
+                      (window as any).showTrackingData();
+                    }
+                  }}
+                  className="inline-flex items-center gap-2 rounded-xl border border-blue-500/30 bg-blue-50 px-4 py-2 text-sm text-blue-700 shadow hover:bg-blue-100"
+                >
+                  عرض البيانات المتتبعة
+                </button>
+                <button
+                  onClick={() => {
+                    if (typeof window !== "undefined") {
+                      (window as any).triggerAnalytics();
+                    }
+                  }}
+                  className="inline-flex items-center gap-2 rounded-xl border border-green-500/30 bg-green-50 px-4 py-2 text-sm text-green-700 shadow hover:bg-green-100"
+                >
+                  إرسال البيانات الآن
+                </button>
                 <a
                   id="debug-download"
                   className="inline-flex items-center gap-2 rounded-xl border border-[#1c9a6f]/30 bg-white px-4 py-2 text-sm text-[#0b3d2e] shadow hover:bg-[#1c9a6f]/5"
