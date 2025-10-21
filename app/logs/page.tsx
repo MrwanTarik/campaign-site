@@ -750,7 +750,9 @@ export default function LogsPage() {
                               d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
                             />
                           </svg>
-                          {formatDate(log.ts)}
+                          {formatDate(
+                            log.timestamp || log.ts || new Date().toISOString()
+                          )}
                         </span>
                         <span className="flex items-center gap-1">
                           <svg
@@ -776,20 +778,43 @@ export default function LogsPage() {
                     {/* Right Section: Sections & Stats */}
                     <div className="flex-1">
                       <p className="text-sm font-medium text-[#0b3d2e]/60 mb-2">
-                        الأقسام المشاهدة ({log.sectionsViewed.length})
+                        الأقسام المشاهدة (
+                        {
+                          (
+                            log.landingPage?.sectionsViewed ||
+                            log.sectionsViewed ||
+                            []
+                          ).length
+                        }
+                        )
                       </p>
                       <div className="flex flex-wrap gap-2">
-                        {log.sectionsViewed.slice(0, 4).map((section) => (
-                          <span
-                            key={section}
-                            className="px-3 py-1 bg-[#1c9a6f]/10 text-[#1c9a6f] text-sm rounded-lg font-medium"
-                          >
-                            {section}
-                          </span>
-                        ))}
-                        {log.sectionsViewed.length > 4 && (
+                        {(
+                          log.landingPage?.sectionsViewed ||
+                          log.sectionsViewed ||
+                          []
+                        )
+                          .slice(0, 4)
+                          .map((section) => (
+                            <span
+                              key={section}
+                              className="px-3 py-1 bg-[#1c9a6f]/10 text-[#1c9a6f] text-sm rounded-lg font-medium"
+                            >
+                              {section}
+                            </span>
+                          ))}
+                        {(
+                          log.landingPage?.sectionsViewed ||
+                          log.sectionsViewed ||
+                          []
+                        ).length > 4 && (
                           <span className="px-3 py-1 bg-[#0b3d2e]/5 text-[#0b3d2e]/60 text-sm rounded-lg font-medium">
-                            +{log.sectionsViewed.length - 4}
+                            +
+                            {(
+                              log.landingPage?.sectionsViewed ||
+                              log.sectionsViewed ||
+                              []
+                            ).length - 4}
                           </span>
                         )}
                       </div>
@@ -838,7 +863,12 @@ export default function LogsPage() {
                       تفاصيل الزيارة
                     </h2>
                     <p className="text-sm text-[#0b3d2e]/60">
-                      {selectedLog.country} • {formatDate(selectedLog.ts)}
+                      {selectedLog.country} •{" "}
+                      {formatDate(
+                        selectedLog.timestamp ||
+                          selectedLog.ts ||
+                          new Date().toISOString()
+                      )}
                     </p>
                   </div>
                   <button
@@ -906,7 +936,11 @@ export default function LogsPage() {
                             الوقت على الصفحة
                           </span>
                           <span className="font-semibold text-[#1c9a6f]">
-                            {formatDuration(selectedLog.secondsOnPage)}
+                            {formatDuration(
+                              selectedLog.totalSecondsOnSite ||
+                                selectedLog.secondsOnPage ||
+                                0
+                            )}
                           </span>
                         </div>
                         {selectedLog.activeSecondsOnPage !== undefined && (
@@ -919,18 +953,23 @@ export default function LogsPage() {
                             </span>
                           </div>
                         )}
-                        {selectedLog.pageName && (
-                          <div className="flex justify-between items-center py-2 border-b border-[#1c9a6f]/10">
-                            <span className="text-sm text-[#0b3d2e]/60">
-                              الصفحة
-                            </span>
-                            <span className="font-semibold text-[#0b3d2e]">
-                              {selectedLog.pageName === "landing"
-                                ? "الصفحة الرئيسية"
-                                : "صفحة التسجيل"}
-                            </span>
-                          </div>
-                        )}
+                        {selectedLog.pageVisits &&
+                          selectedLog.pageVisits.length > 0 && (
+                            <div className="flex justify-between items-center py-2 border-b border-[#1c9a6f]/10">
+                              <span className="text-sm text-[#0b3d2e]/60">
+                                الصفحات المزارة
+                              </span>
+                              <span className="font-semibold text-[#0b3d2e]">
+                                {selectedLog.pageVisits
+                                  .map((v) =>
+                                    v.pageName === "landing"
+                                      ? "رئيسية"
+                                      : "تسجيل"
+                                  )
+                                  .join(", ")}
+                              </span>
+                            </div>
+                          )}
                         {selectedLog.lang && (
                           <div className="flex justify-between items-center py-2 border-b border-[#1c9a6f]/10">
                             <span className="text-sm text-[#0b3d2e]/60">
@@ -956,16 +995,25 @@ export default function LogsPage() {
                             التاريخ والوقت
                           </span>
                           <span className="text-sm text-[#0b3d2e]">
-                            {formatDate(selectedLog.ts)}
+                            {formatDate(
+                              selectedLog.timestamp ||
+                                selectedLog.ts ||
+                                new Date().toISOString()
+                            )}
                           </span>
                         </div>
-                        {selectedLog.exitedAt && (
+                        {(selectedLog.landingPage?.exitedAt ||
+                          selectedLog.interestPage?.exitedAt) && (
                           <div className="flex justify-between items-center py-2 border-b border-[#1c9a6f]/10">
                             <span className="text-sm text-[#0b3d2e]/60">
                               وقت المغادرة
                             </span>
                             <span className="text-sm text-[#0b3d2e]">
-                              {formatDate(selectedLog.exitedAt)}
+                              {formatDate(
+                                selectedLog.interestPage?.exitedAt ||
+                                  selectedLog.landingPage?.exitedAt ||
+                                  new Date().toISOString()
+                              )}
                             </span>
                           </div>
                         )}
@@ -1036,10 +1084,22 @@ export default function LogsPage() {
                             d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
                           />
                         </svg>
-                        الأقسام المشاهدة ({selectedLog.sectionsViewed.length})
+                        الأقسام المشاهدة (
+                        {
+                          (
+                            selectedLog.landingPage?.sectionsViewed ||
+                            selectedLog.sectionsViewed ||
+                            []
+                          ).length
+                        }
+                        )
                       </h3>
                       <div className="flex flex-wrap gap-2">
-                        {selectedLog.sectionsViewed.map((section) => (
+                        {(
+                          selectedLog.landingPage?.sectionsViewed ||
+                          selectedLog.sectionsViewed ||
+                          []
+                        ).map((section) => (
                           <span
                             key={section}
                             className="px-3 py-2 bg-[#1c9a6f]/10 text-[#1c9a6f] text-sm rounded-lg font-medium"
@@ -1106,11 +1166,27 @@ export default function LogsPage() {
                             d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122"
                           />
                         </svg>
-                        نقرات القائمة ({selectedLog.menuClicks.length})
+                        نقرات القائمة (
+                        {
+                          (
+                            selectedLog.landingPage?.menuClicks ||
+                            selectedLog.menuClicks ||
+                            []
+                          ).length
+                        }
+                        )
                       </h3>
-                      {selectedLog.menuClicks.length > 0 ? (
+                      {(
+                        selectedLog.landingPage?.menuClicks ||
+                        selectedLog.menuClicks ||
+                        []
+                      ).length > 0 ? (
                         <div className="space-y-2">
-                          {selectedLog.menuClicks.map((click, i) => (
+                          {(
+                            selectedLog.landingPage?.menuClicks ||
+                            selectedLog.menuClicks ||
+                            []
+                          ).map((click, i) => (
                             <div
                               key={i}
                               className="flex items-center justify-between py-2 px-3 bg-[#f8faf9] rounded-lg"
@@ -1147,11 +1223,27 @@ export default function LogsPage() {
                             d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                           />
                         </svg>
-                        الأسئلة المفتوحة ({selectedLog.faqOpened.length})
+                        الأسئلة المفتوحة (
+                        {
+                          (
+                            selectedLog.landingPage?.faqOpened ||
+                            selectedLog.faqOpened ||
+                            []
+                          ).length
+                        }
+                        )
                       </h3>
-                      {selectedLog.faqOpened.length > 0 ? (
+                      {(
+                        selectedLog.landingPage?.faqOpened ||
+                        selectedLog.faqOpened ||
+                        []
+                      ).length > 0 ? (
                         <div className="space-y-2">
-                          {selectedLog.faqOpened.map((faq, i) => (
+                          {(
+                            selectedLog.landingPage?.faqOpened ||
+                            selectedLog.faqOpened ||
+                            []
+                          ).map((faq, i) => (
                             <div
                               key={i}
                               className="py-2 px-3 bg-[#f8faf9] rounded-lg text-sm text-[#0b3d2e]"
@@ -1168,7 +1260,7 @@ export default function LogsPage() {
                     </div>
 
                     {/* Interest Source */}
-                    {selectedLog.interestSource && (
+                    {selectedLog.interestPage?.interestSource && (
                       <div className="bg-white rounded-xl p-6 border border-[#1c9a6f]/20">
                         <h3 className="font-bold text-[#0b3d2e] mb-4 flex items-center gap-2">
                           <svg
@@ -1188,15 +1280,15 @@ export default function LogsPage() {
                         </h3>
                         <div className="py-3 px-4 bg-[#1c9a6f]/10 rounded-lg">
                           <p className="font-semibold text-[#1c9a6f]">
-                            {selectedLog.interestSource}
+                            {selectedLog.interestPage.interestSource}
                           </p>
                         </div>
                       </div>
                     )}
 
                     {/* Selected Properties */}
-                    {selectedLog.selectedJiwar1?.length ||
-                    selectedLog.selectedJiwar2?.length ? (
+                    {selectedLog.interestPage?.selectedJiwar1?.length ||
+                    selectedLog.interestPage?.selectedJiwar2?.length ? (
                       <div className="bg-white rounded-xl p-6 border border-[#1c9a6f]/20">
                         <h3 className="font-bold text-[#0b3d2e] mb-4 flex items-center gap-2">
                           <svg
@@ -1215,39 +1307,45 @@ export default function LogsPage() {
                           العقارات المحددة
                         </h3>
                         <div className="space-y-3">
-                          {selectedLog.selectedJiwar1 &&
-                            selectedLog.selectedJiwar1.length > 0 && (
+                          {selectedLog.interestPage?.selectedJiwar1 &&
+                            selectedLog.interestPage.selectedJiwar1.length >
+                              0 && (
                               <div>
                                 <p className="text-sm font-semibold text-[#1c9a6f] mb-2">
                                   جِوار ١:
                                 </p>
                                 <div className="flex flex-wrap gap-2">
-                                  {selectedLog.selectedJiwar1.map((id) => (
-                                    <span
-                                      key={id}
-                                      className="px-3 py-1 bg-[#1c9a6f]/10 text-[#1c9a6f] text-xs rounded-lg"
-                                    >
-                                      {id}
-                                    </span>
-                                  ))}
+                                  {selectedLog.interestPage.selectedJiwar1.map(
+                                    (id: string) => (
+                                      <span
+                                        key={id}
+                                        className="px-3 py-1 bg-[#1c9a6f]/10 text-[#1c9a6f] text-xs rounded-lg"
+                                      >
+                                        {id}
+                                      </span>
+                                    )
+                                  )}
                                 </div>
                               </div>
                             )}
-                          {selectedLog.selectedJiwar2 &&
-                            selectedLog.selectedJiwar2.length > 0 && (
+                          {selectedLog.interestPage?.selectedJiwar2 &&
+                            selectedLog.interestPage.selectedJiwar2.length >
+                              0 && (
                               <div>
                                 <p className="text-sm font-semibold text-[#0b3d2e] mb-2">
                                   جِوار ٢:
                                 </p>
                                 <div className="flex flex-wrap gap-2">
-                                  {selectedLog.selectedJiwar2.map((id) => (
-                                    <span
-                                      key={id}
-                                      className="px-3 py-1 bg-[#0b3d2e]/10 text-[#0b3d2e] text-xs rounded-lg"
-                                    >
-                                      {id}
-                                    </span>
-                                  ))}
+                                  {selectedLog.interestPage.selectedJiwar2.map(
+                                    (id: string) => (
+                                      <span
+                                        key={id}
+                                        className="px-3 py-1 bg-[#0b3d2e]/10 text-[#0b3d2e] text-xs rounded-lg"
+                                      >
+                                        {id}
+                                      </span>
+                                    )
+                                  )}
                                 </div>
                               </div>
                             )}
@@ -1256,88 +1354,89 @@ export default function LogsPage() {
                     ) : null}
 
                     {/* Form Data */}
-                    {selectedLog.form && selectedLog.formHasData && (
-                      <div className="bg-white rounded-xl p-6 border border-[#1c9a6f]/20">
-                        <h3 className="font-bold text-[#0b3d2e] mb-4 flex items-center gap-2">
-                          <svg
-                            className="w-5 h-5 text-[#1c9a6f]"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                            />
-                          </svg>
-                          بيانات النموذج
-                          {selectedLog.submitted && (
-                            <span className="mr-2 px-2 py-0.5 bg-green-100 text-green-700 text-xs rounded-full">
-                              مُرسل
-                            </span>
-                          )}
-                          {!selectedLog.submitted && (
-                            <span className="mr-2 px-2 py-0.5 bg-orange-100 text-orange-700 text-xs rounded-full">
-                              غير مكتمل
-                            </span>
-                          )}
-                        </h3>
-                        <div className="space-y-2">
-                          {selectedLog.form.name && (
-                            <div className="flex justify-between py-2 border-b border-[#1c9a6f]/10">
-                              <span className="text-sm text-[#0b3d2e]/60">
-                                الاسم:
+                    {selectedLog.interestPage?.form &&
+                      selectedLog.interestPage?.formHasData && (
+                        <div className="bg-white rounded-xl p-6 border border-[#1c9a6f]/20">
+                          <h3 className="font-bold text-[#0b3d2e] mb-4 flex items-center gap-2">
+                            <svg
+                              className="w-5 h-5 text-[#1c9a6f]"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                              />
+                            </svg>
+                            بيانات النموذج
+                            {selectedLog.interestPage?.submitted && (
+                              <span className="mr-2 px-2 py-0.5 bg-green-100 text-green-700 text-xs rounded-full">
+                                مُرسل
                               </span>
-                              <span className="text-sm font-semibold text-[#0b3d2e]">
-                                {selectedLog.form.name}
+                            )}
+                            {!selectedLog.interestPage?.submitted && (
+                              <span className="mr-2 px-2 py-0.5 bg-orange-100 text-orange-700 text-xs rounded-full">
+                                غير مكتمل
                               </span>
-                            </div>
-                          )}
-                          {selectedLog.form.email && (
-                            <div className="flex justify-between py-2 border-b border-[#1c9a6f]/10">
-                              <span className="text-sm text-[#0b3d2e]/60">
-                                البريد:
-                              </span>
-                              <span className="text-sm font-semibold text-[#0b3d2e]">
-                                {selectedLog.form.email}
-                              </span>
-                            </div>
-                          )}
-                          {selectedLog.form.country && (
-                            <div className="flex justify-between py-2 border-b border-[#1c9a6f]/10">
-                              <span className="text-sm text-[#0b3d2e]/60">
-                                الدولة:
-                              </span>
-                              <span className="text-sm font-semibold text-[#0b3d2e]">
-                                {selectedLog.form.country}
-                              </span>
-                            </div>
-                          )}
-                          {selectedLog.form.phone && (
-                            <div className="flex justify-between py-2 border-b border-[#1c9a6f]/10">
-                              <span className="text-sm text-[#0b3d2e]/60">
-                                الهاتف:
-                              </span>
-                              <span className="text-sm font-semibold text-[#0b3d2e]">
-                                {selectedLog.form.phone}
-                              </span>
-                            </div>
-                          )}
-                          {selectedLog.form.notes && (
-                            <div className="py-2">
-                              <p className="text-sm text-[#0b3d2e]/60 mb-1">
-                                ملاحظات:
-                              </p>
-                              <p className="text-sm text-[#0b3d2e] bg-[#f8faf9] p-3 rounded-lg">
-                                {selectedLog.form.notes}
-                              </p>
-                            </div>
-                          )}
+                            )}
+                          </h3>
+                          <div className="space-y-2">
+                            {selectedLog.interestPage.form.name && (
+                              <div className="flex justify-between py-2 border-b border-[#1c9a6f]/10">
+                                <span className="text-sm text-[#0b3d2e]/60">
+                                  الاسم:
+                                </span>
+                                <span className="text-sm font-semibold text-[#0b3d2e]">
+                                  {selectedLog.interestPage.form.name}
+                                </span>
+                              </div>
+                            )}
+                            {selectedLog.interestPage.form.email && (
+                              <div className="flex justify-between py-2 border-b border-[#1c9a6f]/10">
+                                <span className="text-sm text-[#0b3d2e]/60">
+                                  البريد:
+                                </span>
+                                <span className="text-sm font-semibold text-[#0b3d2e]">
+                                  {selectedLog.interestPage.form.email}
+                                </span>
+                              </div>
+                            )}
+                            {selectedLog.interestPage.form.country && (
+                              <div className="flex justify-between py-2 border-b border-[#1c9a6f]/10">
+                                <span className="text-sm text-[#0b3d2e]/60">
+                                  الدولة:
+                                </span>
+                                <span className="text-sm font-semibold text-[#0b3d2e]">
+                                  {selectedLog.interestPage.form.country}
+                                </span>
+                              </div>
+                            )}
+                            {selectedLog.interestPage.form.phone && (
+                              <div className="flex justify-between py-2 border-b border-[#1c9a6f]/10">
+                                <span className="text-sm text-[#0b3d2e]/60">
+                                  الهاتف:
+                                </span>
+                                <span className="text-sm font-semibold text-[#0b3d2e]">
+                                  {selectedLog.interestPage.form.phone}
+                                </span>
+                              </div>
+                            )}
+                            {selectedLog.interestPage.form.notes && (
+                              <div className="py-2">
+                                <p className="text-sm text-[#0b3d2e]/60 mb-1">
+                                  ملاحظات:
+                                </p>
+                                <p className="text-sm text-[#0b3d2e] bg-[#f8faf9] p-3 rounded-lg">
+                                  {selectedLog.interestPage.form.notes}
+                                </p>
+                              </div>
+                            )}
+                          </div>
                         </div>
-                      </div>
-                    )}
+                      )}
                   </div>
                 </div>
 
