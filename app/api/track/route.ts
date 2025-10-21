@@ -110,17 +110,38 @@ export async function POST(request: NextRequest) {
           ...(existingData.interestPage || {}),
           ...(pageName === "interest"
             ? {
-                selectedOptions: body.selectedOptions || [],
-                selectedJiwar1: body.selectedJiwar1 || [],
-                selectedJiwar2: body.selectedJiwar2 || [],
-                form: body.form || {},
-                formHasData: body.formHasData,
-                submitted: body.submitted,
-                interestSource: body.interestSource,
-                sourceTimestamp: body.sourceTimestamp,
-                secondsOnPage: body.secondsOnPage,
-                activeSecondsOnPage: body.activeSecondsOnPage,
-                exitedAt: body.exitedAt,
+                selectedOptions:
+                  body.selectedOptions ||
+                  existingData.interestPage?.selectedOptions ||
+                  [],
+                selectedJiwar1:
+                  body.selectedJiwar1 ||
+                  existingData.interestPage?.selectedJiwar1 ||
+                  [],
+                selectedJiwar2:
+                  body.selectedJiwar2 ||
+                  existingData.interestPage?.selectedJiwar2 ||
+                  [],
+                form: body.form || existingData.interestPage?.form || {},
+                formHasData:
+                  body.formHasData || existingData.interestPage?.formHasData,
+                // If either current or existing is submitted, mark as submitted
+                submitted:
+                  body.submitted === true ||
+                  existingData.interestPage?.submitted === true,
+                interestSource:
+                  body.interestSource ||
+                  existingData.interestPage?.interestSource,
+                sourceTimestamp:
+                  body.sourceTimestamp ||
+                  existingData.interestPage?.sourceTimestamp,
+                secondsOnPage:
+                  body.secondsOnPage ||
+                  existingData.interestPage?.secondsOnPage,
+                activeSecondsOnPage:
+                  body.activeSecondsOnPage ||
+                  existingData.interestPage?.activeSecondsOnPage,
+                exitedAt: body.exitedAt || existingData.interestPage?.exitedAt,
               }
             : existingData.interestPage || {}),
         },

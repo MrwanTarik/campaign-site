@@ -589,6 +589,7 @@ export default function InterestPage() {
       selectedJiwar1: selected.filter((id) => id.startsWith("j1-")),
       selectedJiwar2: selected.filter((id) => id.startsWith("j2-")),
       form,
+      formHasData: true, // Important: Mark that form has data
       submitted: true,
       interestSource,
       sourceTimestamp,
