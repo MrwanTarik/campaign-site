@@ -413,9 +413,30 @@ export default function LandingJiwarTimeshare() {
         const blob = new Blob([JSON.stringify(payload)], {
           type: "application/json",
         });
-        const ok =
-          navigator.sendBeacon && navigator.sendBeacon("/api/track", blob);
-        if (!ok && DEBUG) {
+
+        // Try sendBeacon first (works best for page unload)
+        let sent = false;
+        if (navigator.sendBeacon) {
+          sent = navigator.sendBeacon("/api/track", blob);
+          console.log("SendBeacon result:", sent);
+        }
+
+        // If sendBeacon failed or unavailable, use fetch with keepalive
+        if (!sent) {
+          console.log("SendBeacon failed, using fetch with keepalive");
+          fetch("/api/track", {
+            method: "POST",
+            body: blob,
+            headers: {
+              "Content-Type": "application/json",
+            },
+            keepalive: true, // Important: keeps request alive even after page unload
+          })
+            .then((res) => console.log("Fetch result:", res.ok))
+            .catch((err) => console.error("Fetch error:", err));
+        }
+
+        if (DEBUG && !sent) {
           const a = document.getElementById("debug-download");
           if (a) {
             const url = URL.createObjectURL(blob);
@@ -464,6 +485,7 @@ export default function LandingJiwarTimeshare() {
 
     return () => {
       // Send final data when component unmounts (navigation away)
+      console.log("Component unmounting - sending final analytics");
       flush(true);
       window.removeEventListener("beforeunload", onBeforeUnload);
       document.removeEventListener("visibilitychange", handleVisibilityChange);

@@ -512,13 +512,30 @@ export default function InterestPage() {
       const blob = new Blob([JSON.stringify(payload)], {
         type: "application/json",
       });
-      const ok =
-        (navigator as any).sendBeacon &&
-        (navigator as any).sendBeacon("/api/track", blob);
 
-      console.log("Send beacon result:", ok);
+      // Try sendBeacon first (works best for page unload)
+      let sent = false;
+      if ((navigator as any).sendBeacon) {
+        sent = (navigator as any).sendBeacon("/api/track", blob);
+        console.log("Send beacon result:", sent);
+      }
 
-      if (!ok && DEBUG) {
+      // If sendBeacon failed or unavailable, use fetch with keepalive
+      if (!sent) {
+        console.log("SendBeacon failed, using fetch with keepalive");
+        fetch("/api/track", {
+          method: "POST",
+          body: blob,
+          headers: {
+            "Content-Type": "application/json",
+          },
+          keepalive: true, // Important: keeps request alive even after page unload
+        })
+          .then((res) => console.log("Fetch result:", res.ok))
+          .catch((err) => console.error("Fetch error:", err));
+      }
+
+      if (!sent && DEBUG) {
         const a = document.getElementById("rooms-debug-download");
         if (a) {
           const url = URL.createObjectURL(blob);
@@ -646,6 +663,8 @@ export default function InterestPage() {
     };
     window.addEventListener("beforeunload", onBeforeUnload);
     return () => {
+      // Send data when component unmounts (user navigating away)
+      console.log("Interest page unmounting - sending final data");
       onBeforeUnload();
       window.removeEventListener("beforeunload", onBeforeUnload as any);
     };
