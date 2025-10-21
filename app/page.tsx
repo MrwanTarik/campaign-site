@@ -37,6 +37,7 @@ export default function LandingJiwarTimeshare() {
       badge1: "ملكية مضمونة ٢٠ سنة",
       badge2: "أسبوع ثابت كل عام",
       badge3: "أسعار تبدأ من ٢٥,٠٠٠ ريال",
+      badge4: "خطط دفع مرنة",
       ctaPrimary: "تسجيل الإهتمام",
       ctaSecondary: "اكتشف التفاصيل",
       cardTitle: "سكينة الروح وضمان الاستثمار",
@@ -51,6 +52,7 @@ export default function LandingJiwarTimeshare() {
         "خدمات نقل ترددية من وإلى الحرم المكي",
         "خيارات متنوعة للوحدات تناسب جميع النزلاء وبأسعار تنافسية",
         "إدارة الحجز والخدمات إلكترونيًا بكل يسر وسهولة",
+        "خطط دفع مرنة",
         "تطبيق جوال لإدارة الحجوزات والخدمات بكل سهولة",
         "خيارات تقسيط مدفوعات ميسرة تناسب جميع الميزانيات مع شركائنا من البنوك وجهات التمويل السعودية",
         "وحدتك مضمونة سنويًا بأسبوع ثابت حسب اختيارك",
@@ -125,6 +127,7 @@ export default function LandingJiwarTimeshare() {
       badge1: "20-year guaranteed ownership",
       badge2: "One fixed week yearly",
       badge3: "Prices from SAR 25,000",
+      badge4: "Flexible payment plans",
       ctaPrimary: "Register Interest",
       ctaSecondary: "Explore details",
       cardTitle: "Tranquility & Investment Assurance",
@@ -139,6 +142,7 @@ export default function LandingJiwarTimeshare() {
         "Reception & guest assistance from arrival.",
         "Comfortable, air-conditioned shuttles to/from the Haram 24/7.",
         "Variety of rooms and premium suites for every need.",
+        "Flexible payment plans",
         "Mobile app to manage bookings and services with ease.",
         "Flexible installment payment options to suit all budgets with our banking and Saudi financing partners",
         "Your unit guaranteed annually with a fixed week of your choice",
@@ -460,6 +464,7 @@ export default function LandingJiwarTimeshare() {
                 <Badge>{t.badge1}</Badge>
                 <Badge>{t.badge2}</Badge>
                 <Badge>{t.badge3}</Badge>
+                <Badge>{t.badge4}</Badge>
               </div>
               <div className="mt-8 flex items-center gap-3">
                 <a
@@ -500,9 +505,20 @@ export default function LandingJiwarTimeshare() {
               <li key={i} className="flex gap-3">
                 <span className="flex-shrink-0 flex items-center justify-center w-7 h-7 rounded-full bg-[#1c9a6f] text-white text-sm font-bold">
                   {isAR
-                    ? ["١١", "١٠", "٩", "٨", "٧", "٦", "٥", "٤", "٣", "٢", "١"][
-                        t.features.length - 1 - i
-                      ]
+                    ? [
+                        "١٢",
+                        "١١",
+                        "١٠",
+                        "٩",
+                        "٨",
+                        "٧",
+                        "٦",
+                        "٥",
+                        "٤",
+                        "٣",
+                        "٢",
+                        "١",
+                      ][t.features.length - 1 - i]
                     : i + 1}
                 </span>
                 <span className="flex-1">{f}</span>
@@ -533,9 +549,10 @@ export default function LandingJiwarTimeshare() {
             />
             <TowerCard
               images={[
-                "/jw-2.jpeg",
-                "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?q=80&w=1200&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?q=80&w=1200&auto=format&fit=crop",
+                "page-1-jw-2-1.jpeg",
+                "page-1-jw-2.2.jpeg",
+                "page-1-jw-2.3.jpeg",
+                "page-1-jw-2.4.jpeg",
               ]}
               title={t.tower2.title}
               desc={t.tower2.desc}

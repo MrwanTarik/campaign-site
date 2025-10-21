@@ -183,7 +183,13 @@ export default function InterestPage() {
       investment_en: "Investment: Starting from SAR 170,000",
       period_ar: "المدة: ١٠ سنوات × ٧ أيام سنويًا",
       period_en: "Period: 10 years × 7 days annually",
-      images: ["page-2-jw-1-r3-4.jpeg", "page-2-jw-1-r3-5.jpeg"],
+      images: [
+        "page-2-jw-1-r3.jpeg",
+        "page-2-jw-1-r3-2.jpeg",
+        "page-2-jw-1-r3-3.jpeg",
+        "page-2-jw-1-r3-4.jpeg",
+        "page-2-jw-1-r3-5.jpeg",
+      ],
     },
   ];
   const jiwar2: Option[] = [
@@ -199,9 +205,9 @@ export default function InterestPage() {
       period_ar: "المدة: ٢٠ سنة × ٧ أيام سنويًا",
       period_en: "Period: 20 years × 7 days annually",
       images: [
-        "https://images.unsplash.com/photo-1560066984-138dadb4c035?q=80&w=1200&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1618773928121-c32242e63f39?q=80&w=1200&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1566665797739-1674de7a421a?q=80&w=1200&auto=format&fit=crop",
+        "page-2-jw-2-r1.jpeg",
+        "page-2-jw-2-r1-2.jpeg",
+        "page-2-jw-2-r1-3.jpeg",
       ],
     },
     {
@@ -215,11 +221,7 @@ export default function InterestPage() {
       investment_en: "Investment: SAR 30,000",
       period_ar: "المدة: ٢٠ سنة × ٧ أيام سنويًا",
       period_en: "Period: 20 years × 7 days annually",
-      images: [
-        "https://images.unsplash.com/photo-1595526114035-0d45ed16cfbf?q=80&w=1200&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1598928506311-c55ded91a20c?q=80&w=1200&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1554995207-c18c203602cb?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1770",
-      ],
+      images: ["page-2-jw-2-r2.jpeg", "page-2-jw-2-r2-2.jpeg"],
     },
     {
       id: "j2-family-studio",
@@ -233,9 +235,10 @@ export default function InterestPage() {
       period_ar: "المدة: ٢٠ سنة × ٧ أيام سنويًا",
       period_en: "Period: 20 years × 7 days annually",
       images: [
-        "https://images.unsplash.com/photo-1540518614846-7eded433c457?q=80&w=1200&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?q=80&w=1200&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1616594039964-ae9021a400a0?q=80&w=1200&auto=format&fit=crop",
+        "page-2-jw-2-r3.jpeg",
+        "page-2-jw-2-r3-2.jpeg",
+        "page-2-jw-2-r3-3.jpeg",
+        "page-2-jw-2-r3-4.jpeg",
       ],
     },
   ];
