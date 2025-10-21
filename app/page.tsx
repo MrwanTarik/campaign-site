@@ -33,7 +33,7 @@ export default function LandingJiwarTimeshare() {
       heroTitleC: " — ملكية تدوم ٢٠ سنة في ",
       towersName: "أبراج جِوار",
       heroDesc:
-        "الآن فرصتك لحجز أسبوع سنوي في أطهر بقاع الأرض، استمتع بالاختيار بين وحداتنا الفاخرة المطلة على المسجد الحرام والكعبة المشرفة أو استكشف الخيارات الأخرى التي تبعد دقائق عن الحرم المكي بالحافلات الترددية. امتياز أن تكون جارًا لبيت الله الحرام أصبح في متناول الجميع لتستمتع وعائلتك بأثمن اللحظات الروحانية بشكل سنوي وبأسعار لا تصدق!",
+        "الآن فرصتك لحجز أسبوع سنوي في أطهر بقاع الأرض، استمتع بالاختيار بين وحداتنا الفاخرة المطلة على المسجد الحرام والكعبة المشرفة أو استكشف الخيارات الأخرى التي تبعد دقائق عن الحرم المكي بالحافلات الترددية. امتياز أن تكون جارًا لبيت الله الحرام أصبح في متناول الجميع لتستمتع وعائلتك بأثمن اللحظات الروحانية بشكل سنوي وبأسعار لا تصدق مع خيارات تقسيط ميسرة!",
       badge1: "ملكية مضمونة ٢٠ سنة",
       badge2: "أسبوع ثابت كل عام",
       badge3: "أسعار تبدأ من ٢٥,٠٠٠ ريال",
@@ -51,6 +51,10 @@ export default function LandingJiwarTimeshare() {
         "خدمات نقل ترددية من وإلى الحرم المكي",
         "خيارات متنوعة للوحدات تناسب جميع النزلاء وبأسعار تنافسية",
         "إدارة الحجز والخدمات إلكترونيًا بكل يسر وسهولة",
+        "تطبيق جوال لإدارة الحجوزات والخدمات بكل سهولة",
+        "خيارات تقسيط مدفوعات ميسرة تناسب جميع الميزانيات مع شركائنا من البنوك وجهات التمويل السعودية",
+        "وحدتك مضمونة سنويًا بأسبوع ثابت حسب اختيارك",
+        "احظَ بأولوية دائمة بجوار الحرم المكي",
       ],
       towersTitle: "أبراج جِوار والمواقع",
       tower1: {
@@ -117,7 +121,7 @@ export default function LandingJiwarTimeshare() {
       heroTitleC: " — 20-year ownership at ",
       towersName: "Jiwar Towers",
       heroDesc:
-        "Invest in cherished spiritual moments with a Kaaba-facing view or just minutes away via shuttle. Living next to the Haram is the true privilege under a shared-benefit model.",
+        "Invest in cherished spiritual moments with a Kaaba-facing view or just minutes away via shuttle. Living next to the Haram is the true privilege under a shared-benefit model with flexible installment payment options.",
       badge1: "20-year guaranteed ownership",
       badge2: "One fixed week yearly",
       badge3: "Prices from SAR 25,000",
@@ -136,6 +140,9 @@ export default function LandingJiwarTimeshare() {
         "Comfortable, air-conditioned shuttles to/from the Haram 24/7.",
         "Variety of rooms and premium suites for every need.",
         "Mobile app to manage bookings and services with ease.",
+        "Flexible installment payment options to suit all budgets with our banking and Saudi financing partners",
+        "Your unit guaranteed annually with a fixed week of your choice",
+        "Enjoy permanent priority near the Holy Haram",
       ],
       towersTitle: "Jiwar Towers & Locations",
       tower1: {
@@ -492,7 +499,11 @@ export default function LandingJiwarTimeshare() {
             {t.features.map((f, i) => (
               <li key={i} className="flex gap-3">
                 <span className="flex-shrink-0 flex items-center justify-center w-7 h-7 rounded-full bg-[#1c9a6f] text-white text-sm font-bold">
-                  {isAR ? ["٧", "٦", "٥", "٤", "٣", "٢", "١"][6 - i] : i + 1}
+                  {isAR
+                    ? ["١١", "١٠", "٩", "٨", "٧", "٦", "٥", "٤", "٣", "٢", "١"][
+                        t.features.length - 1 - i
+                      ]
+                    : i + 1}
                 </span>
                 <span className="flex-1">{f}</span>
               </li>
@@ -510,9 +521,10 @@ export default function LandingJiwarTimeshare() {
           <div className="mt-8 grid md:grid-cols-2 gap-6">
             <TowerCard
               images={[
-                "/jw-2.png",
-                "/jw-1.jpg",
-                "https://images.unsplash.com/photo-1591604129939-f1efa4d9f7fa?q=80&w=1200&auto=format&fit=crop",
+                "page-1-jw-1.jpeg",
+                "page-1-jw-2.jpeg",
+                "page-1-jw-3.jpeg",
+                "page-1-jw-4.jpeg",
               ]}
               title={t.tower1.title}
               desc={t.tower1.desc}

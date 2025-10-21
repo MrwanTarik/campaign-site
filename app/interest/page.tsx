@@ -153,11 +153,7 @@ export default function InterestPage() {
       investment_en: "Investment: Starting from SAR 50,000",
       period_ar: "المدة: ١٠ سنوات × ٧ أيام سنويًا",
       period_en: "Period: 10 years × 7 days annually",
-      images: [
-        "https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?q=80&w=1200&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?q=80&w=1200&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?q=80&w=1200&auto=format&fit=crop",
-      ],
+      images: ["page-2-jw-1-r1.jpeg", "page-2-jw-1-r1-2.jpeg"],
     },
     {
       id: "j1-1br-haram",
@@ -171,9 +167,9 @@ export default function InterestPage() {
       period_ar: "المدة: ١٠ سنوات × ٧ أيام سنويًا",
       period_en: "Period: 10 years × 7 days annually",
       images: [
-        "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?q=80&w=1200&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?q=80&w=1200&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1566195992011-5f6b21e539aa?q=80&w=1200&auto=format&fit=crop",
+        "page-2-jw-1-r2.jpeg",
+        "page-2-jw-1-r2-2.jpeg",
+        "page-2-jw-1-r2-3.jpeg",
       ],
     },
     {
@@ -187,11 +183,7 @@ export default function InterestPage() {
       investment_en: "Investment: Starting from SAR 170,000",
       period_ar: "المدة: ١٠ سنوات × ٧ أيام سنويًا",
       period_en: "Period: 10 years × 7 days annually",
-      images: [
-        "https://images.unsplash.com/photo-1494526585095-c41746248156?q=80&w=1200&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?q=80&w=1200&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?q=80&w=1200&auto=format&fit=crop",
-      ],
+      images: ["page-2-jw-1-r3-4.jpeg", "page-2-jw-1-r3-5.jpeg"],
     },
   ];
   const jiwar2: Option[] = [
