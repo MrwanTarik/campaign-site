@@ -583,58 +583,6 @@ export default function LogsPage() {
               {incompleteForms}
             </p>
           </div>
-
-          <div className="bg-white rounded-xl p-6 border border-[#1c9a6f]/20 shadow-sm">
-            <div className="flex items-center justify-between mb-2">
-              <p className="text-sm font-medium text-[#0b3d2e]/60">
-                زيارات صفحة الهبوط
-              </p>
-              <div className="w-10 h-10 rounded-lg bg-[#1c9a6f]/10 flex items-center justify-center">
-                <svg
-                  className="w-5 h-5 text-[#1c9a6f]"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
-                  />
-                </svg>
-              </div>
-            </div>
-            <p className="text-3xl font-bold text-[#0b3d2e]">
-              {landingPageVisits}
-            </p>
-          </div>
-
-          <div className="bg-white rounded-xl p-6 border border-[#1c9a6f]/20 shadow-sm">
-            <div className="flex items-center justify-between mb-2">
-              <p className="text-sm font-medium text-[#0b3d2e]/60">
-                زيارات صفحة التسجيل
-              </p>
-              <div className="w-10 h-10 rounded-lg bg-[#1c9a6f]/10 flex items-center justify-center">
-                <svg
-                  className="w-5 h-5 text-[#1c9a6f]"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                  />
-                </svg>
-              </div>
-            </div>
-            <p className="text-3xl font-bold text-[#0b3d2e]">
-              {interestPageVisits}
-            </p>
-          </div>
         </div>
 
         {/* Logs Table */}
@@ -1354,89 +1302,118 @@ export default function LogsPage() {
                     ) : null}
 
                     {/* Form Data */}
-                    {selectedLog.interestPage?.form &&
-                      selectedLog.interestPage?.formHasData && (
-                        <div className="bg-white rounded-xl p-6 border border-[#1c9a6f]/20">
-                          <h3 className="font-bold text-[#0b3d2e] mb-4 flex items-center gap-2">
-                            <svg
-                              className="w-5 h-5 text-[#1c9a6f]"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                              />
-                            </svg>
-                            بيانات النموذج
-                            {selectedLog.interestPage?.submitted && (
-                              <span className="mr-2 px-2 py-0.5 bg-green-100 text-green-700 text-xs rounded-full">
-                                مُرسل
+                    {selectedLog.interestPage?.formHasData && (
+                      <div className="bg-white rounded-xl p-6 border border-[#1c9a6f]/20">
+                        <h3 className="font-bold text-[#0b3d2e] mb-4 flex items-center gap-2">
+                          <svg
+                            className="w-5 h-5 text-[#1c9a6f]"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                            />
+                          </svg>
+                          بيانات النموذج
+                          {selectedLog.interestPage?.submitted ? (
+                            <span className="mr-2 px-3 py-1 bg-green-100 text-green-700 text-xs rounded-full font-semibold flex items-center gap-1">
+                              <svg
+                                className="w-3 h-3"
+                                fill="currentColor"
+                                viewBox="0 0 20 20"
+                              >
+                                <path
+                                  fillRule="evenodd"
+                                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                  clipRule="evenodd"
+                                />
+                              </svg>
+                              مُرسل ✓
+                            </span>
+                          ) : (
+                            <span className="mr-2 px-3 py-1 bg-orange-100 text-orange-700 text-xs rounded-full font-semibold flex items-center gap-1">
+                              <svg
+                                className="w-3 h-3"
+                                fill="currentColor"
+                                viewBox="0 0 20 20"
+                              >
+                                <path
+                                  fillRule="evenodd"
+                                  d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                                  clipRule="evenodd"
+                                />
+                              </svg>
+                              غير مكتمل
+                            </span>
+                          )}
+                        </h3>
+                        <div className="space-y-2">
+                          {selectedLog.interestPage.form?.name && (
+                            <div className="flex justify-between py-2 border-b border-[#1c9a6f]/10">
+                              <span className="text-sm text-[#0b3d2e]/60">
+                                الاسم:
                               </span>
-                            )}
-                            {!selectedLog.interestPage?.submitted && (
-                              <span className="mr-2 px-2 py-0.5 bg-orange-100 text-orange-700 text-xs rounded-full">
-                                غير مكتمل
+                              <span className="text-sm font-semibold text-[#0b3d2e]">
+                                {selectedLog.interestPage.form.name}
                               </span>
+                            </div>
+                          )}
+                          {selectedLog.interestPage.form?.email && (
+                            <div className="flex justify-between py-2 border-b border-[#1c9a6f]/10">
+                              <span className="text-sm text-[#0b3d2e]/60">
+                                البريد:
+                              </span>
+                              <span className="text-sm font-semibold text-[#0b3d2e]">
+                                {selectedLog.interestPage.form.email}
+                              </span>
+                            </div>
+                          )}
+                          {selectedLog.interestPage.form?.country && (
+                            <div className="flex justify-between py-2 border-b border-[#1c9a6f]/10">
+                              <span className="text-sm text-[#0b3d2e]/60">
+                                الدولة:
+                              </span>
+                              <span className="text-sm font-semibold text-[#0b3d2e]">
+                                {selectedLog.interestPage.form.country}
+                              </span>
+                            </div>
+                          )}
+                          {selectedLog.interestPage.form?.phone && (
+                            <div className="flex justify-between py-2 border-b border-[#1c9a6f]/10">
+                              <span className="text-sm text-[#0b3d2e]/60">
+                                الهاتف:
+                              </span>
+                              <span className="text-sm font-semibold text-[#0b3d2e]">
+                                {selectedLog.interestPage.form.phone}
+                              </span>
+                            </div>
+                          )}
+                          {selectedLog.interestPage.form?.notes && (
+                            <div className="py-2">
+                              <p className="text-sm text-[#0b3d2e]/60 mb-1">
+                                ملاحظات:
+                              </p>
+                              <p className="text-sm text-[#0b3d2e] bg-[#f8faf9] p-3 rounded-lg">
+                                {selectedLog.interestPage.form.notes}
+                              </p>
+                            </div>
+                          )}
+                          {!selectedLog.interestPage.form?.name &&
+                            !selectedLog.interestPage.form?.email &&
+                            !selectedLog.interestPage.form?.country &&
+                            !selectedLog.interestPage.form?.phone &&
+                            !selectedLog.interestPage.form?.notes && (
+                              <p className="text-sm text-[#0b3d2e]/50 text-center py-4">
+                                لم يتم إدخال أي بيانات
+                              </p>
                             )}
-                          </h3>
-                          <div className="space-y-2">
-                            {selectedLog.interestPage.form.name && (
-                              <div className="flex justify-between py-2 border-b border-[#1c9a6f]/10">
-                                <span className="text-sm text-[#0b3d2e]/60">
-                                  الاسم:
-                                </span>
-                                <span className="text-sm font-semibold text-[#0b3d2e]">
-                                  {selectedLog.interestPage.form.name}
-                                </span>
-                              </div>
-                            )}
-                            {selectedLog.interestPage.form.email && (
-                              <div className="flex justify-between py-2 border-b border-[#1c9a6f]/10">
-                                <span className="text-sm text-[#0b3d2e]/60">
-                                  البريد:
-                                </span>
-                                <span className="text-sm font-semibold text-[#0b3d2e]">
-                                  {selectedLog.interestPage.form.email}
-                                </span>
-                              </div>
-                            )}
-                            {selectedLog.interestPage.form.country && (
-                              <div className="flex justify-between py-2 border-b border-[#1c9a6f]/10">
-                                <span className="text-sm text-[#0b3d2e]/60">
-                                  الدولة:
-                                </span>
-                                <span className="text-sm font-semibold text-[#0b3d2e]">
-                                  {selectedLog.interestPage.form.country}
-                                </span>
-                              </div>
-                            )}
-                            {selectedLog.interestPage.form.phone && (
-                              <div className="flex justify-between py-2 border-b border-[#1c9a6f]/10">
-                                <span className="text-sm text-[#0b3d2e]/60">
-                                  الهاتف:
-                                </span>
-                                <span className="text-sm font-semibold text-[#0b3d2e]">
-                                  {selectedLog.interestPage.form.phone}
-                                </span>
-                              </div>
-                            )}
-                            {selectedLog.interestPage.form.notes && (
-                              <div className="py-2">
-                                <p className="text-sm text-[#0b3d2e]/60 mb-1">
-                                  ملاحظات:
-                                </p>
-                                <p className="text-sm text-[#0b3d2e] bg-[#f8faf9] p-3 rounded-lg">
-                                  {selectedLog.interestPage.form.notes}
-                                </p>
-                              </div>
-                            )}
-                          </div>
                         </div>
-                      )}
+                      </div>
+                    )}
                   </div>
                 </div>
 
