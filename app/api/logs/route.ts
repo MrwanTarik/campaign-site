@@ -17,10 +17,20 @@ export async function GET(request: NextRequest) {
 
     console.log("Reading analytics from Vercel Blob...");
 
-    // List all blobs with analytics prefix
-    const { blobs } = await list({
+    // List all blobs (both analytics- and session- prefixes)
+    const { blobs: analyticsBlobs } = await list({
       prefix: "analytics-",
     });
+
+    const { blobs: sessionBlobs } = await list({
+      prefix: "session-",
+    });
+
+    const { blobs: roomsBlobs } = await list({
+      prefix: "rooms-",
+    });
+
+    const blobs = [...analyticsBlobs, ...sessionBlobs, ...roomsBlobs];
 
     console.log(`Found ${blobs.length} analytics blobs`);
 

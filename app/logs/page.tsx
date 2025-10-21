@@ -99,8 +99,14 @@ export default function LogsPage() {
       secondsOnPage: Number.isFinite(log?.secondsOnPage)
         ? Number(log.secondsOnPage)
         : 0,
+      activeSecondsOnPage: Number.isFinite(log?.activeSecondsOnPage)
+        ? Number(log.activeSecondsOnPage)
+        : undefined,
       sectionsViewed: Array.isArray(log?.sectionsViewed)
         ? (log.sectionsViewed as string[])
+        : [],
+      navClicks: Array.isArray(log?.navClicks)
+        ? (log.navClicks as Array<{ t: number; label: string; href: string }>)
         : [],
       menuClicks: Array.isArray(log?.menuClicks)
         ? (log.menuClicks as Array<{ t: number; label: string; href: string }>)
@@ -108,6 +114,8 @@ export default function LogsPage() {
       faqOpened: Array.isArray(log?.faqOpened)
         ? (log.faqOpened as string[])
         : [],
+      jiwarCardClicks: log?.jiwarCardClicks || [],
+      ctaClicks: log?.ctaClicks || [],
       events: Array.isArray(log?.events)
         ? (log.events as Array<{ t: number; type: string; [key: string]: any }>)
         : [],
@@ -117,6 +125,17 @@ export default function LogsPage() {
         typeof log?.ts === "string" || typeof log?.timestamp === "string"
           ? log.ts || log.timestamp
           : new Date().toISOString(),
+      lang: log?.lang || undefined,
+      pageName: log?.pageName || undefined,
+      type: log?.type || undefined,
+      selectedOptions: log?.selectedOptions || undefined,
+      selectedJiwar1: log?.selectedJiwar1 || undefined,
+      selectedJiwar2: log?.selectedJiwar2 || undefined,
+      form: log?.form || undefined,
+      formHasData: log?.formHasData || undefined,
+      submitted: log?.submitted || undefined,
+      interestSource: log?.interestSource || undefined,
+      sourceTimestamp: log?.sourceTimestamp || undefined,
     }));
   };
 
@@ -831,6 +850,46 @@ export default function LogsPage() {
                         ))}
                       </div>
                     </div>
+
+                    {/* Navigation Clicks */}
+                    {selectedLog.navClicks &&
+                      selectedLog.navClicks.length > 0 && (
+                        <div className="bg-white rounded-xl p-6 border border-[#1c9a6f]/20">
+                          <h3 className="font-bold text-[#0b3d2e] mb-4 flex items-center gap-2">
+                            <svg
+                              className="w-5 h-5 text-[#1c9a6f]"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M13 9l3 3m0 0l-3 3m3-3H8m13 0a9 9 0 11-18 0 9 9 0 0118 0z"
+                              />
+                            </svg>
+                            نقرات التنقل ({selectedLog.navClicks.length})
+                          </h3>
+                          <div className="space-y-2">
+                            {selectedLog.navClicks.map((click, i) => (
+                              <div
+                                key={i}
+                                className="flex items-center justify-between py-2 px-3 bg-[#f8faf9] rounded-lg"
+                              >
+                                <span className="font-medium text-[#0b3d2e]">
+                                  {click.label}
+                                </span>
+                                <span className="text-xs text-[#0b3d2e]/50">
+                                  {new Date(click.t).toLocaleTimeString(
+                                    "ar-SA"
+                                  )}
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
 
                     {/* Menu Clicks */}
                     <div className="bg-white rounded-xl p-6 border border-[#1c9a6f]/20">
