@@ -94,7 +94,7 @@ export default function PrivacyPolicyPage() {
                 {isAR ? "تواصل معنا" : "Contact Us"}
               </h3>
               <div className="space-y-2 text-sm text-[#0b3d2e]/80">
-                <p className="flex items-center gap-2">
+                {/* <p className="flex items-center gap-2">
                   <span className="text-[#1c9a6f]">📞</span>
                   <span>
                     {isAR ? "الهاتف" : "Phone"}:{" "}
@@ -105,7 +105,7 @@ export default function PrivacyPolicyPage() {
                       +966 920 000 123
                     </a>
                   </span>
-                </p>
+                </p> */}
                 <p className="flex items-center gap-2">
                   <span className="text-[#1c9a6f]">✉️</span>
                   <span>
@@ -128,7 +128,7 @@ export default function PrivacyPolicyPage() {
               </h3>
               <div className="flex gap-3">
                 <a
-                  href="https://twitter.com/jiwarproperties"
+                  href="https://twitter.com"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-10 h-10 rounded-full bg-[#1c9a6f]/10 hover:bg-[#1c9a6f]/20 flex items-center justify-center transition"
@@ -143,7 +143,7 @@ export default function PrivacyPolicyPage() {
                   </svg>
                 </a>
                 <a
-                  href="https://instagram.com/jiwarproperties"
+                  href="https://instagram.com"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-10 h-10 rounded-full bg-[#1c9a6f]/10 hover:bg-[#1c9a6f]/20 flex items-center justify-center transition"
@@ -158,7 +158,22 @@ export default function PrivacyPolicyPage() {
                   </svg>
                 </a>
                 <a
-                  href="https://linkedin.com/company/jiwarproperties"
+                  href="https://facebook.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-10 h-10 rounded-full bg-[#1c9a6f]/10 hover:bg-[#1c9a6f]/20 flex items-center justify-center transition"
+                  aria-label="Facebook"
+                >
+                  <svg
+                    className="w-7 h-7 text-[#1c9a6f]"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.988H7.898v-2.89h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562v1.875h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" />
+                  </svg>
+                </a>
+                <a
+                  href="https://linkedin.com"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-10 h-10 rounded-full bg-[#1c9a6f]/10 hover:bg-[#1c9a6f]/20 flex items-center justify-center transition"
@@ -420,7 +435,7 @@ function EnglishPrivacyContent() {
               </a>
             </span>
           </li>
-          <li className="flex items-center gap-2">
+          {/* <li className="flex items-center gap-2">
             <span className="text-[#1c9a6f]">📞</span>
             <span>
               By phone:{" "}
@@ -431,7 +446,7 @@ function EnglishPrivacyContent() {
                 +966 920 000 123
               </a>
             </span>
-          </li>
+          </li> */}
         </ul>
       </section>
     </div>
@@ -598,7 +613,7 @@ function ArabicPrivacyContent() {
       </section>
 
       <section>
-        <h2 className="text-2xl font-bold text-[#1c9a6f] mb-4">اتصل بنا</h2>
+        <h2 className="text-2xl font-bold text-[#1c9a6f] mb-4">تواصل معنا</h2>
         <p className="leading-loose mb-3">
           إذا كان لديك أي أسئلة حول سياسة الخصوصية هذه، يمكنك الاتصال بنا:
         </p>
@@ -615,7 +630,7 @@ function ArabicPrivacyContent() {
               </a>
             </span>
           </li>
-          <li className="flex items-center gap-2">
+          {/* <li className="flex items-center gap-2">
             <span className="text-[#1c9a6f]">📞</span>
             <span>
               عبر الهاتف:{" "}
@@ -626,7 +641,7 @@ function ArabicPrivacyContent() {
                 ٩٢٠ ٠٠٠ ١٢٣ ٩٦٦+
               </a>
             </span>
-          </li>
+          </li> */}
         </ul>
       </section>
     </div>

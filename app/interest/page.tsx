@@ -184,8 +184,8 @@ export default function InterestPage() {
       period_ar: "المدة: ١٠ سنوات × ٧ أيام سنويًا",
       period_en: "Period: 10 years × 7 days annually",
       images: [
-        "page-2-jw-1-r3.jpeg",
         "page-2-jw-1-r3-2.jpeg",
+        "page-2-jw-1-r3.jpeg",
         "page-2-jw-1-r3-3.jpeg",
         "page-2-jw-1-r3-4.jpeg",
         "page-2-jw-1-r3-5.jpeg",
@@ -205,8 +205,8 @@ export default function InterestPage() {
       period_ar: "المدة: ٢٠ سنة × ٧ أيام سنويًا",
       period_en: "Period: 20 years × 7 days annually",
       images: [
-        "page-2-jw-2-r1.jpeg",
         "page-2-jw-2-r1-2.jpeg",
+        "page-2-jw-2-r1.jpeg",
         "page-2-jw-2-r1-3.jpeg",
       ],
     },
@@ -221,7 +221,7 @@ export default function InterestPage() {
       investment_en: "Investment: SAR 30,000",
       period_ar: "المدة: ٢٠ سنة × ٧ أيام سنويًا",
       period_en: "Period: 20 years × 7 days annually",
-      images: ["page-2-jw-2-r2.jpeg", "page-2-jw-2-r2-2.jpeg"],
+      images: ["page-2-jw-2-r2-2.jpeg", "page-2-jw-2-r2.jpeg"],
     },
     {
       id: "j2-family-studio",
@@ -235,8 +235,8 @@ export default function InterestPage() {
       period_ar: "المدة: ٢٠ سنة × ٧ أيام سنويًا",
       period_en: "Period: 20 years × 7 days annually",
       images: [
-        "page-2-jw-2-r3.jpeg",
         "page-2-jw-2-r3-2.jpeg",
+        "page-2-jw-2-r3.jpeg",
         "page-2-jw-2-r3-3.jpeg",
         "page-2-jw-2-r3-4.jpeg",
       ],
@@ -883,11 +883,25 @@ function RoomCard({
     );
   };
 
+  // Autoplay: advance slides every 4 seconds
+  React.useEffect(() => {
+    if (!opt.images || opt.images.length <= 1) return;
+    const id = setInterval(() => {
+      setCurrentImageIndex((prev) =>
+        isAR ? (prev + 1) % opt.images.length : (prev + 1) % opt.images.length
+      );
+    }, 4000);
+    return () => clearInterval(id);
+  }, [opt.images, isAR]);
+
   return (
     <div
-      className={`rounded-3xl overflow-hidden border ${
-        selected ? "border-[#1c9a6f]" : "border-[#1c9a6f]/20"
-      } bg-white shadow-sm`}
+      onClick={() => !disabled && onToggle()}
+      className={`rounded-3xl overflow-hidden border cursor-pointer transition-all ${
+        selected
+          ? "border-[#1c9a6f] border-2 bg-[#1c9a6f]/5 shadow-lg shadow-[#1c9a6f]/20"
+          : "border-[#1c9a6f]/20 bg-white shadow-sm hover:shadow-md hover:border-[#1c9a6f]/40"
+      } ${disabled && !selected ? "opacity-50 cursor-not-allowed" : ""}`}
     >
       <div className="relative h-50 bg-cover bg-center group">
         <div
@@ -897,7 +911,10 @@ function RoomCard({
         {opt.images.length > 1 && (
           <>
             <button
-              onClick={prevImage}
+              onClick={(e) => {
+                e.stopPropagation();
+                prevImage();
+              }}
               className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-[#0b3d2e] rounded-full w-8 h-8 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity text-xl"
               type="button"
               aria-label={isAR ? "الصورة السابقة" : "Previous image"}
@@ -905,7 +922,10 @@ function RoomCard({
               {isAR ? "›" : "‹"}
             </button>
             <button
-              onClick={nextImage}
+              onClick={(e) => {
+                e.stopPropagation();
+                nextImage();
+              }}
               className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-[#0b3d2e] rounded-full w-8 h-8 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity text-xl"
               type="button"
               aria-label={isAR ? "الصورة التالية" : "Next image"}
@@ -916,7 +936,10 @@ function RoomCard({
               {opt.images.map((_, idx) => (
                 <button
                   key={idx}
-                  onClick={() => setCurrentImageIndex(idx)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setCurrentImageIndex(idx);
+                  }}
                   className={`w-2 h-2 rounded-full transition-all ${
                     idx === currentImageIndex ? "bg-white w-4" : "bg-white/60"
                   }`}
@@ -931,20 +954,38 @@ function RoomCard({
       <div className="p-4">
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-bold text-[#0b3d2e]">{title}</h3>
-          <label
-            className={`inline-flex items-center gap-2 text-sm ${
-              disabled && !selected ? "opacity-50" : ""
+          <div
+            className={`inline-flex items-center gap-2 text-sm font-semibold ${
+              selected
+                ? "text-[#1c9a6f]"
+                : disabled
+                ? "text-[#0b3d2e]/40"
+                : "text-[#0b3d2e]/60"
             }`}
           >
-            <input
-              type="checkbox"
-              checked={selected}
-              disabled={disabled && !selected}
-              onChange={onToggle}
-              className="accent-[#1c9a6f] w-4 h-4"
-            />
+            <div
+              className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
+                selected
+                  ? "border-[#1c9a6f] bg-[#1c9a6f]"
+                  : "border-[#0b3d2e]/30"
+              }`}
+            >
+              {selected && (
+                <svg
+                  className="w-3 h-3 text-white"
+                  fill="none"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="3"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path d="M5 13l4 4L19 7"></path>
+                </svg>
+              )}
+            </div>
             <span>{selected ? t.selected : t.select}</span>
-          </label>
+          </div>
         </div>
         <p className="mt-2 text-[#0b3d2e]/80">{area}</p>
         <p className="text-[#0b3d2e]/80">{investment}</p>

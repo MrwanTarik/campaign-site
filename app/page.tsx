@@ -52,11 +52,9 @@ export default function LandingJiwarTimeshare() {
         "خدمات نقل ترددية من وإلى الحرم المكي",
         "خيارات متنوعة للوحدات تناسب جميع النزلاء وبأسعار تنافسية",
         "إدارة الحجز والخدمات إلكترونيًا بكل يسر وسهولة",
-        "خطط دفع مرنة",
         "تطبيق جوال لإدارة الحجوزات والخدمات بكل سهولة",
         "خيارات تقسيط مدفوعات ميسرة تناسب جميع الميزانيات مع شركائنا من البنوك وجهات التمويل السعودية",
         "وحدتك مضمونة سنويًا بأسبوع ثابت حسب اختيارك",
-        "احظَ بأولوية دائمة بجوار الحرم المكي",
       ],
       towersTitle: "أبراج جِوار والمواقع",
       tower1: {
@@ -142,11 +140,9 @@ export default function LandingJiwarTimeshare() {
         "Reception & guest assistance from arrival.",
         "Comfortable, air-conditioned shuttles to/from the Haram 24/7.",
         "Variety of rooms and premium suites for every need.",
-        "Flexible payment plans",
         "Mobile app to manage bookings and services with ease.",
         "Flexible installment payment options to suit all budgets with our banking and Saudi financing partners",
         "Your unit guaranteed annually with a fixed week of your choice",
-        "Enjoy permanent priority near the Holy Haram",
       ],
       towersTitle: "Jiwar Towers & Locations",
       tower1: {
@@ -505,20 +501,9 @@ export default function LandingJiwarTimeshare() {
               <li key={i} className="flex gap-3">
                 <span className="flex-shrink-0 flex items-center justify-center w-7 h-7 rounded-full bg-[#1c9a6f] text-white text-sm font-bold">
                   {isAR
-                    ? [
-                        "١٢",
-                        "١١",
-                        "١٠",
-                        "٩",
-                        "٨",
-                        "٧",
-                        "٦",
-                        "٥",
-                        "٤",
-                        "٣",
-                        "٢",
-                        "١",
-                      ][t.features.length - 1 - i]
+                    ? ["١٠", "٩", "٨", "٧", "٦", "٥", "٤", "٣", "٢", "١"][
+                        t.features.length - 1 - i
+                      ]
                     : i + 1}
                 </span>
                 <span className="flex-1">{f}</span>
@@ -549,9 +534,9 @@ export default function LandingJiwarTimeshare() {
             />
             <TowerCard
               images={[
+                "page-1-jw-2.3.jpeg",
                 "page-1-jw-2-1.jpeg",
                 "page-1-jw-2.2.jpeg",
-                "page-1-jw-2.3.jpeg",
                 "page-1-jw-2.4.jpeg",
               ]}
               title={t.tower2.title}
@@ -605,7 +590,7 @@ export default function LandingJiwarTimeshare() {
                 {t.contactTitle}
               </h3>
               <div className="space-y-2 text-sm text-[#0b3d2e]/80">
-                <p className="flex items-center gap-2">
+                {/* <p className="flex items-center gap-2">
                   <span className="text-[#1c9a6f]">📞</span>
                   <span>
                     {t.phone}:{" "}
@@ -616,7 +601,7 @@ export default function LandingJiwarTimeshare() {
                       +966 920 000 123
                     </a>
                   </span>
-                </p>
+                </p> */}
                 <p className="flex items-center gap-2">
                   <span className="text-[#1c9a6f]">✉️</span>
                   <span>
@@ -639,7 +624,7 @@ export default function LandingJiwarTimeshare() {
               </h3>
               <div className="flex gap-3">
                 <a
-                  href="https://twitter.com/jiwarproperties"
+                  href="https://twitter.com"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-10 h-10 rounded-full bg-[#1c9a6f]/10 hover:bg-[#1c9a6f]/20 flex items-center justify-center transition"
@@ -654,7 +639,7 @@ export default function LandingJiwarTimeshare() {
                   </svg>
                 </a>
                 <a
-                  href="https://instagram.com/jiwarproperties"
+                  href="https://instagram.com"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-10 h-10 rounded-full bg-[#1c9a6f]/10 hover:bg-[#1c9a6f]/20 flex items-center justify-center transition"
@@ -669,7 +654,22 @@ export default function LandingJiwarTimeshare() {
                   </svg>
                 </a>
                 <a
-                  href="https://linkedin.com/company/jiwarproperties"
+                  href="https://facebook.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-10 h-10 rounded-full bg-[#1c9a6f]/10 hover:bg-[#1c9a6f]/20 flex items-center justify-center transition"
+                  aria-label="Facebook"
+                >
+                  <svg
+                    className="w-7 h-7 text-[#1c9a6f]"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.988H7.898v-2.89h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562v1.875h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" />
+                  </svg>
+                </a>
+                <a
+                  href="https://linkedin.com"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-10 h-10 rounded-full bg-[#1c9a6f]/10 hover:bg-[#1c9a6f]/20 flex items-center justify-center transition"
@@ -789,8 +789,22 @@ function TowerCard({
     );
   };
 
+  // Autoplay: advance slides every 4 seconds
+  React.useEffect(() => {
+    if (!images || images.length <= 1) return;
+    const id = setInterval(() => {
+      setCurrentImageIndex((prev) =>
+        isAR ? (prev + 1) % images.length : (prev + 1) % images.length
+      );
+    }, 4000);
+    return () => clearInterval(id);
+  }, [images, isAR]);
+
   return (
-    <div className="rounded-3xl overflow-hidden border border-[#1c9a6f]/20 bg-white shadow-sm">
+    <a
+      href="/interest"
+      className="block rounded-3xl overflow-hidden border border-[#1c9a6f]/20 bg-white shadow-sm hover:shadow-lg transition-shadow cursor-pointer"
+    >
       <div className="relative h-48 bg-cover bg-center group">
         <div
           className="h-full bg-cover bg-center transition-all duration-300"
@@ -839,7 +853,7 @@ function TowerCard({
           </span>
         )}
       </div>
-    </div>
+    </a>
   );
 }
 
