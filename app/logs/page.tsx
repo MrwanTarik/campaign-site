@@ -7,31 +7,61 @@ interface AnalyticsData {
   sessionId: string;
   ip: string | null;
   country: string | null;
-  secondsOnPage: number;
-  activeSecondsOnPage?: number;
-  sectionsViewed: string[];
-  navClicks?: Array<{ t: number; label: string; href: string }>;
-  menuClicks: Array<{ t: number; label: string; href: string }>;
-  faqOpened: string[];
-  jiwarCardClicks?: any[];
-  ctaClicks?: any[];
-  events: Array<{ t: number; type: string; [key: string]: any }>;
-  path: string;
   ua: string;
-  ts: string;
-  exitedAt?: string;
-  sessionEnded?: boolean;
   lang?: string;
-  pageName?: string;
-  type?: string;
-  selectedOptions?: string[];
-  selectedJiwar1?: string[];
-  selectedJiwar2?: string[];
-  form?: any;
-  formHasData?: boolean;
-  submitted?: boolean;
-  interestSource?: string;
-  sourceTimestamp?: string;
+  timestamp: string;
+  lastUpdated?: string;
+
+  // Page visits tracking
+  pageVisits?: Array<{
+    pageName: string;
+    timestamp: string;
+    secondsOnPage: number;
+    activeSecondsOnPage?: number;
+    exitedAt?: string;
+    sessionEnded?: boolean;
+  }>;
+
+  // Landing page data
+  landingPage?: {
+    sectionsViewed?: string[];
+    navClicks?: Array<{ t: number; label: string; href: string }>;
+    menuClicks?: Array<{ t: number; label: string; href: string }>;
+    faqOpened?: string[];
+    events?: Array<{ t: number; type: string; [key: string]: any }>;
+    secondsOnPage?: number;
+    activeSecondsOnPage?: number;
+    exitedAt?: string;
+  };
+
+  // Interest page data
+  interestPage?: {
+    selectedOptions?: string[];
+    selectedJiwar1?: string[];
+    selectedJiwar2?: string[];
+    form?: any;
+    formHasData?: boolean;
+    submitted?: boolean;
+    interestSource?: string;
+    sourceTimestamp?: string;
+    secondsOnPage?: number;
+    activeSecondsOnPage?: number;
+    exitedAt?: string;
+  };
+
+  // Totals
+  totalSecondsOnSite?: number;
+  totalActiveSecondsOnSite?: number;
+  sessionEnded?: boolean;
+
+  // Legacy fields for backward compatibility
+  secondsOnPage?: number;
+  activeSecondsOnPage?: number;
+  sectionsViewed?: string[];
+  navClicks?: Array<{ t: number; label: string; href: string }>;
+  menuClicks?: Array<{ t: number; label: string; href: string }>;
+  faqOpened?: string[];
+  ts?: string;
 }
 
 export default function LogsPage() {
@@ -124,17 +154,12 @@ export default function LogsPage() {
     }
   };
 
-  // Function to deduplicate logs based on sessionId and guid
+  // Sort logs by timestamp (newest first)
   const deduplicateLogs = (logs: AnalyticsData[]) => {
-    const seen = new Set<string>();
-    return logs.filter((log) => {
-      // Create a unique key combining sessionId and guid
-      const key = `${log.sessionId}-${log.guid}`;
-      if (seen.has(key)) {
-        return false; // Skip duplicate
-      }
-      seen.add(key);
-      return true;
+    return logs.sort((a, b) => {
+      const dateA = new Date(a.timestamp || a.ts || 0).getTime();
+      const dateB = new Date(b.timestamp || b.ts || 0).getTime();
+      return dateB - dateA; // Newest first
     });
   };
 
@@ -145,48 +170,34 @@ export default function LogsPage() {
       sessionId: typeof log?.sessionId === "string" ? log.sessionId : "",
       ip: (log?.ip ?? null) as string | null,
       country: (log?.country ?? null) as string | null,
-      secondsOnPage: Number.isFinite(log?.secondsOnPage)
-        ? Number(log.secondsOnPage)
-        : 0,
-      activeSecondsOnPage: Number.isFinite(log?.activeSecondsOnPage)
-        ? Number(log.activeSecondsOnPage)
-        : undefined,
-      sectionsViewed: Array.isArray(log?.sectionsViewed)
-        ? (log.sectionsViewed as string[])
-        : [],
-      navClicks: Array.isArray(log?.navClicks)
-        ? (log.navClicks as Array<{ t: number; label: string; href: string }>)
-        : [],
-      menuClicks: Array.isArray(log?.menuClicks)
-        ? (log.menuClicks as Array<{ t: number; label: string; href: string }>)
-        : [],
-      faqOpened: Array.isArray(log?.faqOpened)
-        ? (log.faqOpened as string[])
-        : [],
-      jiwarCardClicks: log?.jiwarCardClicks || [],
-      ctaClicks: log?.ctaClicks || [],
-      events: Array.isArray(log?.events)
-        ? (log.events as Array<{ t: number; type: string; [key: string]: any }>)
-        : [],
-      path: typeof log?.path === "string" ? log.path : "",
       ua: typeof log?.ua === "string" ? log.ua : "",
-      ts:
-        typeof log?.ts === "string" || typeof log?.timestamp === "string"
-          ? log.ts || log.timestamp
-          : new Date().toISOString(),
       lang: log?.lang || undefined,
-      pageName: log?.pageName || undefined,
-      type: log?.type || undefined,
-      selectedOptions: log?.selectedOptions || undefined,
-      selectedJiwar1: log?.selectedJiwar1 || undefined,
-      selectedJiwar2: log?.selectedJiwar2 || undefined,
-      form: log?.form || undefined,
-      formHasData: log?.formHasData || undefined,
-      submitted: log?.submitted || undefined,
-      interestSource: log?.interestSource || undefined,
-      sourceTimestamp: log?.sourceTimestamp || undefined,
-      exitedAt: log?.exitedAt || undefined,
-      sessionEnded: log?.sessionEnded || undefined,
+      timestamp: log?.timestamp || log?.ts || new Date().toISOString(),
+      lastUpdated: log?.lastUpdated,
+
+      // Page visits
+      pageVisits: log?.pageVisits || [],
+
+      // Landing page data
+      landingPage: log?.landingPage || {},
+
+      // Interest page data
+      interestPage: log?.interestPage || {},
+
+      // Totals
+      totalSecondsOnSite: log?.totalSecondsOnSite,
+      totalActiveSecondsOnSite: log?.totalActiveSecondsOnSite,
+      sessionEnded: log?.sessionEnded,
+
+      // Legacy fields for backward compatibility
+      secondsOnPage: log?.secondsOnPage,
+      activeSecondsOnPage: log?.activeSecondsOnPage,
+      sectionsViewed:
+        log?.sectionsViewed || log?.landingPage?.sectionsViewed || [],
+      navClicks: log?.navClicks || log?.landingPage?.navClicks || [],
+      menuClicks: log?.menuClicks || log?.landingPage?.menuClicks || [],
+      faqOpened: log?.faqOpened || log?.landingPage?.faqOpened || [],
+      ts: log?.ts || log?.timestamp,
     }));
   };
 
@@ -210,39 +221,65 @@ export default function LogsPage() {
   };
 
   // Calculate statistics
-  const totalVisits = logs.length;
+  const totalVisits = logs.length; // Number of unique sessions
+
   const avgTimeOnPage =
     logs.length > 0
       ? Math.round(
-          logs.reduce((sum, log) => sum + log.secondsOnPage, 0) / logs.length
+          logs.reduce(
+            (sum, log) =>
+              sum + (log.totalSecondsOnSite || log.secondsOnPage || 0),
+            0
+          ) / logs.length
         )
       : 0;
   const avgActiveTime =
     logs.length > 0
       ? Math.round(
           logs.reduce(
-            (sum, log) => sum + (log.activeSecondsOnPage || log.secondsOnPage),
+            (sum, log) =>
+              sum +
+              (log.totalActiveSecondsOnSite ||
+                log.activeSecondsOnPage ||
+                log.secondsOnPage ||
+                0),
             0
           ) / logs.length
         )
       : 0;
   const totalSectionsViewed = logs.reduce(
-    (sum, log) => sum + (log.sectionsViewed?.length || 0),
+    (sum, log) =>
+      sum +
+      (log.landingPage?.sectionsViewed?.length ||
+        log.sectionsViewed?.length ||
+        0),
     0
   );
   const uniqueCountries = new Set(
     logs.map((log) => log.country).filter(Boolean)
   ).size;
+
+  // Count page visits from the pageVisits array
   const landingPageVisits = logs.filter(
-    (log) => log.pageName === "landing"
+    (log) =>
+      log.pageVisits?.some((visit) => visit.pageName === "landing") ||
+      (log.landingPage && Object.keys(log.landingPage).length > 0)
   ).length;
   const interestPageVisits = logs.filter(
-    (log) => log.pageName === "interest"
+    (log) =>
+      log.pageVisits?.some((visit) => visit.pageName === "interest") ||
+      (log.interestPage && Object.keys(log.interestPage).length > 0)
   ).length;
-  const submittedForms = logs.filter((log) => log.submitted === true).length;
+
+  const submittedForms = logs.filter(
+    (log) => log.interestPage?.submitted === true
+  ).length;
   const incompleteForms = logs.filter(
-    (log) => log.formHasData && !log.submitted
+    (log) => log.interestPage?.formHasData && !log.interestPage?.submitted
   ).length;
+
+  // Group logs by session for better visualization
+  const uniqueSessions = logs.length; // Each log is now one complete session
 
   if (loading) {
     return (
@@ -359,7 +396,33 @@ export default function LogsPage() {
 
       <main className="max-w-7xl mx-auto px-6 py-8">
         {/* Statistics Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-6">
+          <div className="bg-white rounded-xl p-6 border border-[#1c9a6f]/20 shadow-sm">
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-sm font-medium text-[#0b3d2e]/60">
+                جلسات فريدة
+              </p>
+              <div className="w-10 h-10 rounded-lg bg-[#1c9a6f]/10 flex items-center justify-center">
+                <svg
+                  className="w-5 h-5 text-[#1c9a6f]"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
+                  />
+                </svg>
+              </div>
+            </div>
+            <p className="text-3xl font-bold text-[#0b3d2e]">
+              {uniqueSessions}
+            </p>
+          </div>
+
           <div className="bg-white rounded-xl p-6 border border-[#1c9a6f]/20 shadow-sm">
             <div className="flex items-center justify-between mb-2">
               <p className="text-sm font-medium text-[#0b3d2e]/60">
@@ -644,9 +707,29 @@ export default function LogsPage() {
                           </svg>
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="font-bold text-[#0b3d2e] text-lg">
-                            {log.country || "غير محدد"}
-                          </p>
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <p className="font-bold text-[#0b3d2e] text-lg">
+                              {log.country || "غير محدد"}
+                            </p>
+                            {log.pageVisits && log.pageVisits.length > 0 && (
+                              <div className="flex gap-1">
+                                {log.pageVisits.map((visit, idx) => (
+                                  <span
+                                    key={idx}
+                                    className={`px-2 py-0.5 rounded text-xs font-semibold ${
+                                      visit.pageName === "landing"
+                                        ? "bg-blue-100 text-blue-700"
+                                        : "bg-purple-100 text-purple-700"
+                                    }`}
+                                  >
+                                    {visit.pageName === "landing"
+                                      ? "رئيسية"
+                                      : "تسجيل"}
+                                  </span>
+                                ))}
+                              </div>
+                            )}
+                          </div>
                           <p className="text-sm text-[#0b3d2e]/60">
                             {log.ip || "IP غير متاح"}
                           </p>
@@ -683,7 +766,9 @@ export default function LogsPage() {
                               d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
                             />
                           </svg>
-                          {formatDuration(log.secondsOnPage)}
+                          {formatDuration(
+                            log.totalSecondsOnSite || log.secondsOnPage || 0
+                          )}
                         </span>
                       </div>
                     </div>

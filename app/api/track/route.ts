@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { put, list } from "@vercel/blob";
+import { put, list, del } from "@vercel/blob";
 
 export async function POST(request: NextRequest) {
   try {
@@ -35,36 +35,189 @@ export async function POST(request: NextRequest) {
       body.ip = serverIP;
     }
 
-    // Add timestamp and unique ID
-    const analyticsEntry = {
+    const sessionId = body.sessionId || body.guid;
+    const pageName = body.pageName || "unknown";
+
+    // Check if there's an existing record for this session
+    const { blobs } = await list({ prefix: `session-${sessionId}` });
+
+    let mergedData: any = {
       ...body,
-      id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-      timestamp: new Date().toISOString(),
       serverIP,
+      timestamp: new Date().toISOString(),
     };
 
-    // Try to consolidate with existing session data
-    const sessionId = body.sessionId || body.guid;
-    let filename = `analytics-${analyticsEntry.id}.json`;
+    if (blobs.length > 0) {
+      // Found existing session record - merge the data
+      console.log(
+        `Found ${blobs.length} existing record(s) for session ${sessionId}`
+      );
 
-    if (sessionId) {
-      // Use session-based filename for easier consolidation
-      filename = `session-${sessionId}-${analyticsEntry.id}.json`;
+      // Fetch the existing record
+      const existingBlob = blobs[0];
+      const existingResponse = await fetch(existingBlob.url);
+      const existingData = await existingResponse.json();
+
+      console.log("Merging with existing data");
+
+      // Merge the data intelligently
+      mergedData = {
+        ...existingData,
+        // Update timestamp to latest
+        timestamp: new Date().toISOString(),
+        lastUpdated: new Date().toISOString(),
+
+        // Keep session identifiers
+        guid: existingData.guid || body.guid,
+        sessionId: existingData.sessionId || body.sessionId,
+        ip: existingData.ip || body.ip,
+        country: existingData.country || body.country,
+        ua: existingData.ua || body.ua,
+        lang: existingData.lang || body.lang,
+
+        // Merge page visits
+        pageVisits: [
+          ...(existingData.pageVisits || []),
+          {
+            pageName: pageName,
+            timestamp: body.ts || new Date().toISOString(),
+            secondsOnPage: body.secondsOnPage,
+            activeSecondsOnPage: body.activeSecondsOnPage,
+            exitedAt: body.exitedAt,
+            sessionEnded: body.sessionEnded,
+          },
+        ],
+
+        // Combine landing page data
+        landingPage: {
+          ...(existingData.landingPage || {}),
+          ...(pageName === "landing"
+            ? {
+                sectionsViewed: body.sectionsViewed || [],
+                navClicks: body.navClicks || [],
+                menuClicks: body.menuClicks || [],
+                faqOpened: body.faqOpened || [],
+                events: body.events || [],
+                secondsOnPage: body.secondsOnPage,
+                activeSecondsOnPage: body.activeSecondsOnPage,
+                exitedAt: body.exitedAt,
+              }
+            : existingData.landingPage || {}),
+        },
+
+        // Combine interest page data
+        interestPage: {
+          ...(existingData.interestPage || {}),
+          ...(pageName === "interest"
+            ? {
+                selectedOptions: body.selectedOptions || [],
+                selectedJiwar1: body.selectedJiwar1 || [],
+                selectedJiwar2: body.selectedJiwar2 || [],
+                form: body.form || {},
+                formHasData: body.formHasData,
+                submitted: body.submitted,
+                interestSource: body.interestSource,
+                sourceTimestamp: body.sourceTimestamp,
+                secondsOnPage: body.secondsOnPage,
+                activeSecondsOnPage: body.activeSecondsOnPage,
+                exitedAt: body.exitedAt,
+              }
+            : existingData.interestPage || {}),
+        },
+
+        // Calculate total time across all pages
+        totalSecondsOnSite:
+          (existingData.totalSecondsOnSite || 0) + (body.secondsOnPage || 0),
+        totalActiveSecondsOnSite:
+          (existingData.totalActiveSecondsOnSite || 0) +
+          (body.activeSecondsOnPage || 0),
+
+        // Track if session has ended
+        sessionEnded: body.sessionEnded || existingData.sessionEnded,
+      };
+
+      // Delete old blob
+      await del(existingBlob.url);
+      console.log("Deleted old session record");
+    } else {
+      // First record for this session
+      console.log("Creating first record for session");
+      mergedData = {
+        guid: body.guid,
+        sessionId: body.sessionId,
+        ip: body.ip,
+        country: body.country,
+        ua: body.ua,
+        lang: body.lang,
+        serverIP,
+        timestamp: new Date().toISOString(),
+        lastUpdated: new Date().toISOString(),
+
+        pageVisits: [
+          {
+            pageName: pageName,
+            timestamp: body.ts || new Date().toISOString(),
+            secondsOnPage: body.secondsOnPage,
+            activeSecondsOnPage: body.activeSecondsOnPage,
+            exitedAt: body.exitedAt,
+            sessionEnded: body.sessionEnded,
+          },
+        ],
+
+        landingPage:
+          pageName === "landing"
+            ? {
+                sectionsViewed: body.sectionsViewed || [],
+                navClicks: body.navClicks || [],
+                menuClicks: body.menuClicks || [],
+                faqOpened: body.faqOpened || [],
+                events: body.events || [],
+                secondsOnPage: body.secondsOnPage,
+                activeSecondsOnPage: body.activeSecondsOnPage,
+                exitedAt: body.exitedAt,
+              }
+            : {},
+
+        interestPage:
+          pageName === "interest"
+            ? {
+                selectedOptions: body.selectedOptions || [],
+                selectedJiwar1: body.selectedJiwar1 || [],
+                selectedJiwar2: body.selectedJiwar2 || [],
+                form: body.form || {},
+                formHasData: body.formHasData,
+                submitted: body.submitted,
+                interestSource: body.interestSource,
+                sourceTimestamp: body.sourceTimestamp,
+                secondsOnPage: body.secondsOnPage,
+                activeSecondsOnPage: body.activeSecondsOnPage,
+                exitedAt: body.exitedAt,
+              }
+            : {},
+
+        totalSecondsOnSite: body.secondsOnPage || 0,
+        totalActiveSecondsOnSite: body.activeSecondsOnPage || 0,
+        sessionEnded: body.sessionEnded,
+      };
     }
 
+    // Use consistent filename for the session
+    const filename = `session-${sessionId}.json`;
+
     // Store in Vercel Blob
-    const blob = await put(filename, JSON.stringify(analyticsEntry, null, 2), {
+    const blob = await put(filename, JSON.stringify(mergedData, null, 2), {
       access: "public",
       contentType: "application/json",
     });
 
-    console.log("Analytics data stored in Vercel Blob:", blob.url);
+    console.log("Merged analytics data stored in Vercel Blob:", blob.url);
 
     return NextResponse.json({
       success: true,
-      message: "Analytics data stored successfully",
+      message: "Analytics data merged successfully",
       blobUrl: blob.url,
       sessionId: sessionId,
+      merged: blobs.length > 0,
     });
   } catch (error) {
     console.error("Error storing analytics data:", error);
