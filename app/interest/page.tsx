@@ -110,6 +110,7 @@ export default function InterestPage() {
 
   const startedAtRef = React.useRef<number>(Date.now());
   const [submitted, setSubmitted] = React.useState(false);
+  const submittedRef = React.useRef(false);
 
   // Track active time only
   const activeTimeStartRef = React.useRef<number>(Date.now());
@@ -602,8 +603,21 @@ export default function InterestPage() {
     };
     sendRecord(payload);
     setSubmitted(true);
+    submittedRef.current = true;
     setSent({ ok: true, message: t.successMsg });
   };
+
+  // Refs to track latest values without causing re-renders
+  const selectedRef = React.useRef(selected);
+  const formRef = React.useRef(form);
+
+  React.useEffect(() => {
+    selectedRef.current = selected;
+  }, [selected]);
+
+  React.useEffect(() => {
+    formRef.current = form;
+  }, [form]);
 
   React.useEffect(() => {
     // Flag to prevent sending data twice
@@ -611,11 +625,14 @@ export default function InterestPage() {
 
     const guid = getOrCreateGUID();
     const sessionId = getOrCreateSessionId();
+
     const onBeforeUnload = () => {
-      if (submitted || dataSent) return;
+      // Don't send if already submitted via form or already sent
+      if (submittedRef.current || dataSent) return;
 
       // Mark as sent to prevent duplicates
       dataSent = true;
+
       const secondsOnPage = Math.round(
         (Date.now() - startedAtRef.current) / 1000
       );
@@ -634,9 +651,17 @@ export default function InterestPage() {
         "jiwar_interest_source_timestamp"
       );
 
-      // Check if form has any data
+      // Check if form has any data (using ref to get latest value)
+      const currentForm = formRef.current;
       const formHasData =
-        form.name || form.email || form.country || form.phone || form.notes;
+        currentForm.name ||
+        currentForm.email ||
+        currentForm.country ||
+        currentForm.phone ||
+        currentForm.notes;
+
+      // Get latest selected options
+      const currentSelected = selectedRef.current;
 
       const payload = {
         type: "rooms_visit",
@@ -648,10 +673,10 @@ export default function InterestPage() {
         country: ipInfo.country,
         secondsOnPage,
         activeSecondsOnPage,
-        selectedOptions: selected,
-        selectedJiwar1: selected.filter((id) => id.startsWith("j1-")),
-        selectedJiwar2: selected.filter((id) => id.startsWith("j2-")),
-        form,
+        selectedOptions: currentSelected,
+        selectedJiwar1: currentSelected.filter((id) => id.startsWith("j1-")),
+        selectedJiwar2: currentSelected.filter((id) => id.startsWith("j2-")),
+        form: currentForm,
         formHasData,
         submitted: false,
         interestSource,
@@ -667,22 +692,16 @@ export default function InterestPage() {
       };
       sendRecord(payload);
     };
+
     window.addEventListener("beforeunload", onBeforeUnload);
+
     return () => {
       // Send data when component unmounts (user navigating away)
       console.log("Interest page unmounting - sending final data");
       onBeforeUnload();
       window.removeEventListener("beforeunload", onBeforeUnload as any);
     };
-  }, [
-    submitted,
-    selected,
-    form,
-    ipInfo,
-    getOrCreateGUID,
-    getOrCreateSessionId,
-    isAR,
-  ]);
+  }, []); // Empty dependency array - only run once!
 
   return (
     <div
