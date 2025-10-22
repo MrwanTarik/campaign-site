@@ -299,6 +299,7 @@ export default function InterestPage() {
     ok: boolean;
     message: string;
   }>(null);
+  const [showSuccessPopup, setShowSuccessPopup] = React.useState(false);
 
   const countries = React.useMemo(
     () => [
@@ -606,6 +607,13 @@ export default function InterestPage() {
     setSubmitted(true);
     submittedRef.current = true;
     setSent({ ok: true, message: t.successMsg });
+
+    // Show success popup
+    setShowSuccessPopup(true);
+
+    // Reset form after successful submission
+    setForm({ name: "", email: "", country: "", phone: "", notes: "" });
+    setSelected([]);
   };
 
   // Refs to track latest values without causing re-renders
@@ -920,14 +928,8 @@ export default function InterestPage() {
                 {t.submitBtn}
               </button>
             </div>
-            {sent && (
-              <p
-                className={`text-sm ${
-                  sent.ok ? "text-green-700" : "text-red-600"
-                }`}
-              >
-                {sent.message}
-              </p>
+            {sent && !sent.ok && (
+              <p className="text-sm text-red-600">{sent.message}</p>
             )}
           </form>
           {DEBUG && (
@@ -965,6 +967,59 @@ export default function InterestPage() {
           </div>
         </div>
       </footer>
+
+      {/* Success Popup Modal */}
+      {showSuccessPopup && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm transition-opacity duration-300 ease-out"
+          onClick={() => setShowSuccessPopup(false)}
+        >
+          <div
+            className="bg-white rounded-3xl shadow-2xl max-w-md w-full p-8 transform transition-all duration-300 ease-out scale-100 animate-[slideUp_0.3s_ease-out]"
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              animation: "slideUp 0.3s ease-out",
+            }}
+          >
+            <div className="flex flex-col items-center text-center">
+              {/* Success Icon */}
+              <div className="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center mb-6 animate-[bounce_0.6s_ease-out]">
+                <svg
+                  className="w-10 h-10 text-green-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={3}
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+              </div>
+
+              {/* Success Message */}
+              <h3 className="text-2xl font-bold text-[#0b3d2e] mb-3">
+                {isAR ? "تم التسجيل بنجاح!" : "Successfully Registered!"}
+              </h3>
+              <p className="text-[#0b3d2e]/70 mb-6 leading-relaxed">
+                {isAR
+                  ? "شكراً لتسجيل اهتمامك. سيتواصل معك فريق جِوار قريباً."
+                  : "Thank you for registering your interest. The Jiwar team will contact you soon."}
+              </p>
+
+              {/* Close Button */}
+              <button
+                onClick={() => setShowSuccessPopup(false)}
+                className="w-full rounded-2xl bg-[#1c9a6f] text-white px-8 py-3 font-bold hover:brightness-110 transition-all duration-200 shadow-lg shadow-[#1c9a6f]/30 hover:shadow-[#1c9a6f]/40"
+              >
+                {isAR ? "حسناً" : "OK"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
