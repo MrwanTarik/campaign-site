@@ -64,6 +64,10 @@ interface AnalyticsData {
   ts?: string;
 }
 
+// Static credentials - you can change these
+const AUTH_USERNAME = "jiwar_admin";
+const AUTH_PASSWORD = "Jiwar@2025#Secure";
+
 export default function LogsPage() {
   const [logs, setLogs] = useState<AnalyticsData[]>([]);
   const [loading, setLoading] = useState(true);
@@ -73,6 +77,22 @@ export default function LogsPage() {
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [showCleanupConfirm, setShowCleanupConfirm] = useState(false);
   const [cleaning, setCleaning] = useState(false);
+
+  // Authentication state
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [loginError, setLoginError] = useState("");
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+
+  // Check authentication on mount
+  useEffect(() => {
+    const authToken = localStorage.getItem("jiwar_logs_auth");
+    if (authToken === btoa(`${AUTH_USERNAME}:${AUTH_PASSWORD}`)) {
+      setIsAuthenticated(true);
+    }
+    setIsCheckingAuth(false);
+  }, []);
 
   // Prevent tracking on the logs page
   useEffect(() => {
@@ -88,8 +108,31 @@ export default function LogsPage() {
   }, []);
 
   useEffect(() => {
-    fetchLogs();
-  }, []);
+    if (isAuthenticated) {
+      fetchLogs();
+    }
+  }, [isAuthenticated]);
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoginError("");
+
+    if (username === AUTH_USERNAME && password === AUTH_PASSWORD) {
+      const authToken = btoa(`${AUTH_USERNAME}:${AUTH_PASSWORD}`);
+      localStorage.setItem("jiwar_logs_auth", authToken);
+      setIsAuthenticated(true);
+    } else {
+      setLoginError("اسم المستخدم أو كلمة المرور غير صحيحة");
+      setPassword("");
+    }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("jiwar_logs_auth");
+    setIsAuthenticated(false);
+    setUsername("");
+    setPassword("");
+  };
 
   const fetchLogs = async (isRefresh = false) => {
     try {
@@ -281,6 +324,130 @@ export default function LogsPage() {
   // Group logs by session for better visualization
   const uniqueSessions = logs.length; // Each log is now one complete session
 
+  // Show loading while checking authentication
+  if (isCheckingAuth) {
+    return (
+      <div className="min-h-screen bg-[#f8faf9] flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#1c9a6f] mx-auto"></div>
+          <p className="mt-4 text-[#0b3d2e]">جاري التحميل...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show login page if not authenticated
+  if (!isAuthenticated) {
+    return (
+      <div
+        dir="rtl"
+        className="min-h-screen bg-[#f8faf9] flex items-center justify-center p-4"
+      >
+        <div className="w-full max-w-md">
+          {/* Logo and Title */}
+          <div className="text-center mb-8">
+            <div className="flex justify-center mb-4">
+              <LogoJiwar className="w-16 h-16" />
+            </div>
+            <h1 className="text-3xl font-bold text-[#0b3d2e] mb-2">
+              سجلات الزوار
+            </h1>
+            <p className="text-[#0b3d2e]/60">الرجاء تسجيل الدخول للمتابعة</p>
+          </div>
+
+          {/* Login Form */}
+          <div className="bg-white rounded-2xl shadow-lg border border-[#1c9a6f]/20 p-8">
+            <form onSubmit={handleLogin} className="space-y-6">
+              {loginError && (
+                <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-start gap-3">
+                  <svg
+                    className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                  <p className="text-sm text-red-800">{loginError}</p>
+                </div>
+              )}
+
+              <div>
+                <label
+                  htmlFor="username"
+                  className="block text-sm font-semibold text-[#0b3d2e] mb-2"
+                >
+                  اسم المستخدم
+                </label>
+                <input
+                  type="text"
+                  id="username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  className="w-full px-4 py-3 rounded-lg border border-[#1c9a6f]/30 bg-white text-[#0b3d2e] focus:outline-none focus:ring-2 focus:ring-[#1c9a6f]/50 focus:border-[#1c9a6f] transition-all"
+                  placeholder="أدخل اسم المستخدم"
+                  required
+                  autoComplete="username"
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-semibold text-[#0b3d2e] mb-2"
+                >
+                  كلمة المرور
+                </label>
+                <input
+                  type="password"
+                  id="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full px-4 py-3 rounded-lg border border-[#1c9a6f]/30 bg-white text-[#0b3d2e] focus:outline-none focus:ring-2 focus:ring-[#1c9a6f]/50 focus:border-[#1c9a6f] transition-all"
+                  placeholder="أدخل كلمة المرور"
+                  required
+                  autoComplete="current-password"
+                />
+              </div>
+
+              <button
+                type="submit"
+                className="w-full bg-[#1c9a6f] text-white font-semibold py-3 px-4 rounded-lg hover:bg-[#1c9a6f]/90 focus:outline-none focus:ring-2 focus:ring-[#1c9a6f]/50 focus:ring-offset-2 transition-all transform hover:scale-[1.02] active:scale-[0.98]"
+              >
+                تسجيل الدخول
+              </button>
+            </form>
+
+            <div className="mt-6 pt-6 border-t border-[#1c9a6f]/10">
+              <a
+                href="/"
+                className="text-sm text-[#1c9a6f] hover:text-[#1c9a6f]/80 font-medium flex items-center justify-center gap-2"
+              >
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M10 19l-7-7m0 0l7-7m-7 7h18"
+                  />
+                </svg>
+                العودة للصفحة الرئيسية
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
@@ -389,6 +556,25 @@ export default function LogsPage() {
               >
                 الصفحة الرئيسية
               </a>
+              <button
+                onClick={handleLogout}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-red-600/30 bg-white text-red-600 hover:bg-red-50 transition-colors font-medium"
+              >
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                  />
+                </svg>
+                تسجيل الخروج
+              </button>
             </div>
           </div>
         </div>
