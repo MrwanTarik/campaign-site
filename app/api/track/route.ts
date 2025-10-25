@@ -74,6 +74,8 @@ export async function POST(request: NextRequest) {
         country: existingData.country || body.country,
         ua: existingData.ua || body.ua,
         lang: existingData.lang || body.lang,
+        source: existingData.source || body.source,
+        sourceTimestamp: existingData.sourceTimestamp || body.sourceTimestamp,
 
         // Merge page visits
         pageVisits: [
@@ -170,6 +172,8 @@ export async function POST(request: NextRequest) {
         country: body.country,
         ua: body.ua,
         lang: body.lang,
+        source: body.source,
+        sourceTimestamp: body.sourceTimestamp,
         serverIP,
         timestamp: new Date().toISOString(),
         lastUpdated: new Date().toISOString(),

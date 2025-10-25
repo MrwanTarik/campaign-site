@@ -213,6 +213,16 @@ export default function LandingJiwarTimeshare() {
       return;
     }
 
+    // Capture and store source parameter from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const sourceParam = urlParams.get("source");
+    if (sourceParam) {
+      // Store in localStorage for persistence across sessions
+      localStorage.setItem("jiwar_source", sourceParam);
+      localStorage.setItem("jiwar_source_timestamp", Date.now().toString());
+      console.log("Source parameter captured:", sourceParam);
+    }
+
     // Flag to prevent sending data twice
     let dataSent = false;
 
@@ -247,6 +257,10 @@ export default function LandingJiwarTimeshare() {
     let totalActiveTime = 0;
     let isTabActive = !document.hidden;
 
+    // Get stored source parameter
+    const storedSource = localStorage.getItem("jiwar_source");
+    const sourceTimestamp = localStorage.getItem("jiwar_source_timestamp");
+
     const ctx: any = {
       guid,
       sessionId,
@@ -269,6 +283,8 @@ export default function LandingJiwarTimeshare() {
       ua: typeof navigator !== "undefined" ? navigator.userAgent : "",
       lang: isAR ? "ar" : "en",
       pageName: "landing",
+      source: storedSource || null,
+      sourceTimestamp: sourceTimestamp || null,
     };
 
     fetch("https://ipapi.co/json/")
@@ -403,6 +419,8 @@ export default function LandingJiwarTimeshare() {
         ua: ctx.ua,
         lang: ctx.lang,
         pageName: ctx.pageName,
+        source: ctx.source,
+        sourceTimestamp: ctx.sourceTimestamp,
         ts: new Date().toISOString(),
         exitedAt: final ? new Date().toISOString() : undefined,
         sessionEnded: final,

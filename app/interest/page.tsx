@@ -123,6 +123,16 @@ export default function InterestPage() {
   }>({ ip: null, country: null });
 
   React.useEffect(() => {
+    // Capture and store source parameter from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const sourceParam = urlParams.get("source");
+    if (sourceParam) {
+      // Store in localStorage for persistence across sessions
+      localStorage.setItem("jiwar_source", sourceParam);
+      localStorage.setItem("jiwar_source_timestamp", Date.now().toString());
+      console.log("Source parameter captured:", sourceParam);
+    }
+
     fetch("https://ipapi.co/json/")
       .then((r) => (r.ok ? r.json() : null))
       .then((d) => {
@@ -577,6 +587,10 @@ export default function InterestPage() {
       "jiwar_interest_source_timestamp"
     );
 
+    // Get source from URL parameter (stored in localStorage)
+    const urlSource = localStorage.getItem("jiwar_source");
+    const urlSourceTimestamp = localStorage.getItem("jiwar_source_timestamp");
+
     const payload = {
       type: "rooms_submit",
       guid,
@@ -593,7 +607,8 @@ export default function InterestPage() {
       formHasData: true, // Important: Mark that form has data
       submitted: true,
       interestSource,
-      sourceTimestamp,
+      source: urlSource || null,
+      sourceTimestamp: urlSourceTimestamp || sourceTimestamp,
       pageName: "interest",
       path:
         typeof location !== "undefined"
@@ -660,6 +675,10 @@ export default function InterestPage() {
         "jiwar_interest_source_timestamp"
       );
 
+      // Get source from URL parameter (stored in localStorage)
+      const urlSource = localStorage.getItem("jiwar_source");
+      const urlSourceTimestamp = localStorage.getItem("jiwar_source_timestamp");
+
       // Check if form has any data (using ref to get latest value)
       const currentForm = formRef.current;
       const formHasData =
@@ -689,7 +708,8 @@ export default function InterestPage() {
         formHasData,
         submitted: false,
         interestSource,
-        sourceTimestamp,
+        source: urlSource || null,
+        sourceTimestamp: urlSourceTimestamp || sourceTimestamp,
         pageName: "interest",
         path:
           typeof location !== "undefined"
