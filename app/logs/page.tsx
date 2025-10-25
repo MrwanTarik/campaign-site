@@ -1930,57 +1930,6 @@ function AnalyticsDashboard({ logs }: { logs: AnalyticsData[] }) {
           </div>
         </div>
       </div>
-
-      {/* Registered Users by Platform */}
-      <div className="bg-white rounded-xl p-6 border border-[#1c9a6f]/20 shadow-sm">
-        <h3 className="text-lg font-bold text-[#0b3d2e] mb-4 flex items-center gap-2">
-          <svg
-            className="w-5 h-5 text-[#1c9a6f]"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
-          </svg>
-          المستخدمون المسجلون حسب المنصة
-        </h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-          {registeredPlatformData.length > 0 ? (
-            registeredPlatformData.map(([platform, count]) => {
-              const color = platformColors[platform] || "#1c9a6f";
-              return (
-                <div
-                  key={platform}
-                  className="bg-gradient-to-br from-white to-gray-50 rounded-xl p-4 border border-[#1c9a6f]/20"
-                >
-                  <div
-                    className="w-10 h-10 rounded-lg mb-3 flex items-center justify-center"
-                    style={{ backgroundColor: `${color}20` }}
-                  >
-                    <div
-                      className="w-4 h-4 rounded-full"
-                      style={{ backgroundColor: color }}
-                    />
-                  </div>
-                  <p className="text-sm text-[#0b3d2e]/60 mb-1">
-                    {getPlatformName(platform)}
-                  </p>
-                  <p className="text-2xl font-bold text-[#0b3d2e]">{count}</p>
-                </div>
-              );
-            })
-          ) : (
-            <div className="col-span-full text-center py-8 text-[#0b3d2e]/60">
-              لا توجد تسجيلات بعد
-            </div>
-          )}
-        </div>
-      </div>
     </div>
   );
 }
