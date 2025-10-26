@@ -208,6 +208,45 @@ export default function LogsPage() {
     });
   };
 
+  // Helper function to clean platform sources
+  const cleanPlatformSource = (
+    source: string | null | undefined
+  ): string | null => {
+    if (!source) return null;
+
+    // List of valid platform sources
+    const validPlatforms = [
+      "facebook",
+      "twitter",
+      "snapchat",
+      "tiktok",
+      "instagram",
+    ];
+
+    // If it's a valid platform, return it
+    if (validPlatforms.includes(source.toLowerCase())) {
+      return source.toLowerCase();
+    }
+
+    // If it's an interest source (like header_cta, hero_cta_primary, etc.), return null
+    // These should not be counted as platform sources
+    const interestSources = [
+      "header_cta",
+      "hero_cta_primary",
+      "investment_section_cta",
+      "jiwar_card_برج جِوار ١",
+      "jiwar_card_برج جِوار ٢",
+      "direct",
+    ];
+
+    if (interestSources.some((interest) => source.includes(interest))) {
+      return null; // This will be counted as "مباشر" (direct)
+    }
+
+    // For any other unknown source, return null (direct)
+    return null;
+  };
+
   // Ensure every log has safe defaults to avoid undefined access
   const normalizeLogs = (rawLogs: any[]): AnalyticsData[] => {
     return rawLogs.map((log) => ({
@@ -217,7 +256,7 @@ export default function LogsPage() {
       country: (log?.country ?? null) as string | null,
       ua: typeof log?.ua === "string" ? log.ua : "",
       lang: log?.lang || undefined,
-      source: log?.source || null,
+      source: cleanPlatformSource(log?.source), // Clean and validate platform source
       sourceTimestamp: log?.sourceTimestamp || null,
       timestamp: log?.timestamp || log?.ts || new Date().toISOString(),
       lastUpdated: log?.lastUpdated,
