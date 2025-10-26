@@ -29,6 +29,10 @@ export default function RootLayout({
           href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap"
           rel="stylesheet"
         />
+        <script
+          src="https://chat.javna.com/chat-widget/EEv2Kj3NZ4NK071815007614Y4JGXzQb.js"
+          defer
+        ></script>
       </head>
       <body className="antialiased">{children}</body>
     </html>

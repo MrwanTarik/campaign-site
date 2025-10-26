@@ -1,0 +1,9 @@
+these should be our campaign links for example 
+https://jiwarproperties.com/?source=facebook
+https://jiwarproperties.com/?source=twitter
+https://jiwarproperties.com/?source=snapchat
+https://jiwarproperties.com/?source=tiktok
+https://jiwarproperties.com/?source=instagram
+
+
+I gave a name for the parameter to be called source based on the source value, the analytics dashboard will be reteriving data so we should use this source parameter or if you needed to change it update me please, also i included this platforms, if there's any more platforms also update me 
