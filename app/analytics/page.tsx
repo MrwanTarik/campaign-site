@@ -170,7 +170,7 @@ export default function AnalyticsPage() {
       ...log,
       timestamp: log.timestamp || log.ts || new Date().toISOString(),
       country: log.country || "غير محدد",
-      source: log.source || log.interestPage?.interestSource || null,
+      source: log.source || null, // Only use actual platform source, not interestSource
     }));
   };
 
@@ -385,6 +385,7 @@ function AnalyticsDashboard({ logs }: { logs: AnalyticsData[] }) {
 
   // Users by platform (source)
   const platformStats = logs.reduce((acc, log) => {
+    // Only count actual platform sources, use "مباشر" for null/undefined sources
     const source = log.source || "مباشر";
     acc[source] = (acc[source] || 0) + 1;
     return acc;
@@ -398,6 +399,7 @@ function AnalyticsDashboard({ logs }: { logs: AnalyticsData[] }) {
   const registeredByPlatform = logs
     .filter((log) => log.interestPage?.submitted === true)
     .reduce((acc, log) => {
+      // Only count actual platform sources, use "مباشر" for null/undefined sources
       const source = log.source || "مباشر";
       acc[source] = (acc[source] || 0) + 1;
       return acc;
