@@ -127,10 +127,21 @@ export default function InterestPage() {
     const urlParams = new URLSearchParams(window.location.search);
     const sourceParam = urlParams.get("source");
     if (sourceParam) {
+      // Map short codes to full platform names
+      const sourceMapping: { [key: string]: string } = {
+        f: "facebook",
+        i: "instagram",
+        s: "snapchat",
+        t: "tiktok",
+      };
+
+      const fullSource =
+        sourceMapping[sourceParam.toLowerCase()] || sourceParam;
+
       // Store in localStorage for persistence across sessions
-      localStorage.setItem("jiwar_source", sourceParam);
+      localStorage.setItem("jiwar_source", fullSource);
       localStorage.setItem("jiwar_source_timestamp", Date.now().toString());
-      console.log("Source parameter captured:", sourceParam);
+      console.log("Source parameter captured:", sourceParam, "→", fullSource);
     }
 
     fetch("https://ipapi.co/json/")
