@@ -652,7 +652,7 @@ function AnalyticsDashboard({ logs }: { logs: AnalyticsData[] }) {
             <select
               value={selectedCountry}
               onChange={(e) => setSelectedCountry(e.target.value)}
-              className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#1c9a6f] focus:border-transparent transition-all"
+              className="px-3 py-2 border bg-[#1c9a6f]  border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#1c9a6f] focus:border-transparent transition-all"
             >
               <option value="all">جميع الدول</option>
               {allCountries.map(([country, count]) => (
