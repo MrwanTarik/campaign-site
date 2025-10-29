@@ -216,6 +216,11 @@ export default function LandingJiwarTimeshare() {
     // Capture and store source parameter from URL
     const urlParams = new URLSearchParams(window.location.search);
     const sourceParam = urlParams.get("source");
+
+    // Always clear old source first to prevent stale data
+    localStorage.removeItem("jiwar_source");
+    localStorage.removeItem("jiwar_source_timestamp");
+
     if (sourceParam) {
       // Map short codes to full platform names
       const sourceMapping: { [key: string]: string } = {
@@ -228,10 +233,17 @@ export default function LandingJiwarTimeshare() {
       const fullSource =
         sourceMapping[sourceParam.toLowerCase()] || sourceParam;
 
-      // Store in localStorage for persistence across sessions
+      // Store in localStorage for this session only
       localStorage.setItem("jiwar_source", fullSource);
       localStorage.setItem("jiwar_source_timestamp", Date.now().toString());
       console.log("Source parameter captured:", sourceParam, "→", fullSource);
+    } else {
+      // No source parameter - check document.referrer for actual referrer
+      const referrer = document.referrer;
+      console.log("No source parameter. Referrer:", referrer);
+
+      // Don't set any source - let it be null for direct visits
+      // This way visits from jiwarproperties.com without ?source will be "مباشر"
     }
 
     // Flag to prevent sending data twice
