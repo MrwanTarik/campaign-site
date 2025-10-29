@@ -394,6 +394,9 @@ export default function AnalyticsPage() {
 }
 
 function AnalyticsDashboard({ logs }: { logs: AnalyticsData[] }) {
+  // State for country filter
+  const [selectedCountry, setSelectedCountry] = React.useState<string>("all");
+
   // Calculate metrics
   const totalVisitors = logs.length;
   const totalSessions = logs.reduce(
@@ -422,8 +425,19 @@ function AnalyticsDashboard({ logs }: { logs: AnalyticsData[] }) {
     .sort(([, a], [, b]) => b - a)
     .slice(0, 10);
 
-  // Users by platform (source)
-  const platformStats = logs.reduce((acc, log) => {
+  // Get all countries sorted by count for filter dropdown
+  const allCountries = Object.entries(countryStats).sort(
+    ([, a], [, b]) => b - a
+  );
+
+  // Filter logs by selected country for platform stats
+  const filteredLogs =
+    selectedCountry === "all"
+      ? logs
+      : logs.filter((log) => (log.country || "غير محدد") === selectedCountry);
+
+  // Users by platform (source) - filtered by country
+  const platformStats = filteredLogs.reduce((acc, log) => {
     // Only count actual platform sources, use "مباشر" for null/undefined sources
     const source = log.source || "مباشر";
     acc[source] = (acc[source] || 0) + 1;
@@ -433,6 +447,8 @@ function AnalyticsDashboard({ logs }: { logs: AnalyticsData[] }) {
   const platformData = Object.entries(platformStats).sort(
     ([, a], [, b]) => b - a
   );
+
+  const filteredTotalVisitors = filteredLogs.length;
 
   // Registered users by platform
   const registeredByPlatform = logs
@@ -614,48 +630,83 @@ function AnalyticsDashboard({ logs }: { logs: AnalyticsData[] }) {
 
         {/* Users by Platform */}
         <div className="bg-white rounded-xl p-6 border border-[#1c9a6f]/20 shadow-sm">
-          <h3 className="text-lg font-bold text-[#0b3d2e] mb-4 flex items-center gap-2">
-            <svg
-              className="w-5 h-5 text-[#1c9a6f]"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-bold text-[#0b3d2e] flex items-center gap-2">
+              <svg
+                className="w-5 h-5 text-[#1c9a6f]"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M13 10V3L4 14h7v7l9-11h-7z"
+                />
+              </svg>
+              الزوار حسب المنصة
+            </h3>
+
+            {/* Country Filter Dropdown */}
+            <select
+              value={selectedCountry}
+              onChange={(e) => setSelectedCountry(e.target.value)}
+              className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#1c9a6f] focus:border-transparent transition-all"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M13 10V3L4 14h7v7l9-11h-7z"
-              />
-            </svg>
-            الزوار حسب المنصة
-          </h3>
+              <option value="all">جميع الدول</option>
+              {allCountries.map(([country, count]) => (
+                <option key={country} value={country}>
+                  {country} ({count})
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Show selected country info */}
+          {selectedCountry !== "all" && (
+            <div className="mb-3 px-3 py-2 bg-[#1c9a6f]/10 rounded-lg text-sm text-[#0b3d2e]">
+              عرض البيانات من:{" "}
+              <span className="font-bold">{selectedCountry}</span> (
+              {filteredTotalVisitors} زائر)
+            </div>
+          )}
+
           <div className="space-y-3">
-            {platformData.map(([platform, count]) => {
-              const percentage = ((count / totalVisitors) * 100).toFixed(1);
-              const color = platformColors[platform] || "#1c9a6f";
-              return (
-                <div key={platform}>
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-sm font-medium text-[#0b3d2e]">
-                      {getPlatformName(platform)}
-                    </span>
-                    <span className="text-sm text-[#0b3d2e]/60">
-                      {count} ({percentage}%)
-                    </span>
+            {platformData.length > 0 ? (
+              platformData.map(([platform, count]) => {
+                const percentage = (
+                  (count / filteredTotalVisitors) *
+                  100
+                ).toFixed(1);
+                const color = platformColors[platform] || "#1c9a6f";
+                return (
+                  <div key={platform}>
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-sm font-medium text-[#0b3d2e]">
+                        {getPlatformName(platform)}
+                      </span>
+                      <span className="text-sm text-[#0b3d2e]/60">
+                        {count} ({percentage}%)
+                      </span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div
+                        className="h-2 rounded-full transition-all"
+                        style={{
+                          width: `${percentage}%`,
+                          backgroundColor: color,
+                        }}
+                      />
+                    </div>
                   </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div
-                      className="h-2 rounded-full transition-all"
-                      style={{
-                        width: `${percentage}%`,
-                        backgroundColor: color,
-                      }}
-                    />
-                  </div>
-                </div>
-              );
-            })}
+                );
+              })
+            ) : (
+              <div className="text-center py-4 text-[#0b3d2e]/60">
+                لا توجد بيانات للدولة المحددة
+              </div>
+            )}
           </div>
         </div>
       </div>
