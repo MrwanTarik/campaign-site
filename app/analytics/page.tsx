@@ -549,7 +549,10 @@ function AnalyticsDashboard({ logs }: { logs: AnalyticsData[] }) {
             </div>
             <div>
               <p className="text-sm text-[#0b3d2e]/60 mb-1">متوسط وقت الجلسة</p>
-              <p className="text-3xl font-bold text-[#0b3d2e]">
+              <p
+                style={{ direction: "rtl" }}
+                className="text-3xl font-bold text-[#0b3d2e] direction-ltr"
+              >
                 {formatDuration(avgSessionTime)}
               </p>
             </div>
