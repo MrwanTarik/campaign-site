@@ -11,6 +11,8 @@ interface AnalyticsData {
   lang?: string;
   source?: string | null;
   sourceTimestamp?: string | null;
+  location?: string | null;
+  locationTimestamp?: string | null;
   timestamp: string;
   lastUpdated?: string;
 
@@ -46,6 +48,8 @@ interface AnalyticsData {
     submitted?: boolean;
     interestSource?: string;
     sourceTimestamp?: string;
+    location?: string;
+    locationTimestamp?: string;
     secondsOnPage?: number;
     activeSecondsOnPage?: number;
     exitedAt?: string;
@@ -171,6 +175,8 @@ export default function AnalyticsPage() {
       timestamp: log.timestamp || log.ts || new Date().toISOString(),
       country: log.country || "غير محدد",
       source: cleanPlatformSource(log.source), // Clean and validate platform source
+      location: log.location || null,
+      locationTimestamp: log.locationTimestamp || null,
     }));
   };
 
@@ -425,6 +431,24 @@ function AnalyticsDashboard({ logs }: { logs: AnalyticsData[] }) {
     .sort(([, a], [, b]) => b - a)
     .slice(0, 10);
 
+  // Users by location parameter (from URL)
+  const locationStats = logs.reduce((acc, log) => {
+    if (log.location) {
+      const location = log.location;
+      acc[location] = (acc[location] || 0) + 1;
+    }
+    return acc;
+  }, {} as Record<string, number>);
+
+  const topLocations = Object.entries(locationStats)
+    .sort(([, a], [, b]) => b - a)
+    .slice(0, 10);
+
+  const totalWithLocation = Object.values(locationStats).reduce(
+    (sum, count) => sum + count,
+    0
+  );
+
   // Get all countries sorted by count for filter dropdown
   const allCountries = Object.entries(countryStats).sort(
     ([, a], [, b]) => b - a
@@ -586,8 +610,8 @@ function AnalyticsDashboard({ logs }: { logs: AnalyticsData[] }) {
         </div>
       </div>
 
-      {/* Charts Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      {/* Charts Row - Updated to 3 columns */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Users by Country */}
         <div className="bg-white rounded-xl p-6 border border-[#1c9a6f]/20 shadow-sm">
           <h3 className="text-lg font-bold text-[#0b3d2e] mb-4 flex items-center gap-2">
@@ -711,6 +735,89 @@ function AnalyticsDashboard({ logs }: { logs: AnalyticsData[] }) {
               </div>
             )}
           </div>
+        </div>
+
+        {/* Users by Target Location (URL Parameter) */}
+        <div className="bg-white rounded-xl p-6 border border-[#1c9a6f]/20 shadow-sm">
+          <h3 className="text-lg font-bold text-[#0b3d2e] mb-4 flex items-center gap-2">
+            <svg
+              className="w-5 h-5 text-[#1c9a6f]"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+              />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+              />
+            </svg>
+            الزوار حسب الموقع المستهدف
+          </h3>
+
+          {topLocations.length > 0 ? (
+            <>
+              <div className="mb-3 px-3 py-2 bg-[#1c9a6f]/10 rounded-lg text-sm text-[#0b3d2e]">
+                الزوار مع معلومات الموقع:{" "}
+                <span className="font-bold">{totalWithLocation}</span> من{" "}
+                {totalVisitors}
+              </div>
+              <div className="space-y-3">
+                {topLocations.map(([location, count]) => {
+                  const percentage = (
+                    (count / totalWithLocation) *
+                    100
+                  ).toFixed(1);
+                  return (
+                    <div key={location}>
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-sm font-medium text-[#0b3d2e] flex items-center gap-2">
+                          <span className="text-base">📍</span>
+                          {location}
+                        </span>
+                        <span className="text-sm text-[#0b3d2e]/60">
+                          {count} ({percentage}%)
+                        </span>
+                      </div>
+                      <div className="w-full bg-gray-200 rounded-full h-2">
+                        <div
+                          className="bg-[#1c9a6f] h-2 rounded-full transition-all"
+                          style={{ width: `${percentage}%` }}
+                        />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </>
+          ) : (
+            <div className="text-center py-8 text-[#0b3d2e]/60">
+              <svg
+                className="w-12 h-12 mx-auto mb-3 text-[#0b3d2e]/30"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              <p className="font-medium mb-1">لا توجد بيانات موقع متاحة</p>
+              <p className="text-xs">
+                استخدم معامل location في الروابط لتتبع المواقع المستهدفة
+              </p>
+            </div>
+          )}
         </div>
       </div>
 
