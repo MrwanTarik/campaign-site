@@ -15,25 +15,6 @@ export default function LandingJiwarTimeshare() {
 
   const isAR = lang === "ar";
   const dir = isAR ? "rtl" : "ltr";
-
-  // Build interest page href preserving source/location params (from URL or storage)
-  const interestHref = React.useMemo(() => {
-    if (typeof window === "undefined") return "/interest";
-    const params = new URLSearchParams(window.location.search);
-
-    // Fallback to stored values if params are missing
-    if (!params.get("source")) {
-      const storedSource = localStorage.getItem("jiwar_source");
-      if (storedSource) params.set("source", storedSource);
-    }
-    if (!params.get("location")) {
-      const storedLocation = localStorage.getItem("jiwar_location");
-      if (storedLocation) params.set("location", storedLocation);
-    }
-
-    const qs = params.toString();
-    return qs ? `/interest?${qs}` : "/interest";
-  }, [isAR]);
   const align = isAR ? "text-right" : "text-left";
 
   // Translations
@@ -626,7 +607,7 @@ export default function LandingJiwarTimeshare() {
           </nav>
           <div className="flex items-center gap-2">
             <a
-              href={interestHref}
+              href="/interest"
               onClick={() => {
                 sessionStorage.setItem("jiwar_interest_source", "header_cta");
                 sessionStorage.setItem(
@@ -673,7 +654,7 @@ export default function LandingJiwarTimeshare() {
               </div>
               <div className="mt-8 flex items-center gap-3">
                 <a
-                  href={interestHref}
+                  href="/interest"
                   onClick={() => {
                     sessionStorage.setItem(
                       "jiwar_interest_source",
@@ -778,7 +759,7 @@ export default function LandingJiwarTimeshare() {
             ))}
           </ul>
           <a
-            href={interestHref}
+            href="/interest"
             onClick={() => {
               sessionStorage.setItem(
                 "jiwar_interest_source",
@@ -1060,7 +1041,7 @@ function TowerCard({
 
   return (
     <a
-      href={interestHref}
+      href="/interest"
       onClick={handleCardClick}
       className="block rounded-3xl overflow-hidden border border-[#1c9a6f]/20 bg-white shadow-sm hover:shadow-lg transition-shadow cursor-pointer"
     >
