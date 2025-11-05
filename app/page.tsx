@@ -458,6 +458,8 @@ export default function LandingJiwarTimeshare() {
         pageName: ctx.pageName,
         source: ctx.source,
         sourceTimestamp: ctx.sourceTimestamp,
+        location: ctx.location,
+        locationTimestamp: ctx.locationTimestamp,
         ts: new Date().toISOString(),
         exitedAt: final ? new Date().toISOString() : undefined,
         sessionEnded: final,
