@@ -436,9 +436,14 @@ function AnalyticsDashboard({ logs }: { logs: AnalyticsData[] }) {
     if (log.location) {
       const location = log.location;
       acc[location] = (acc[location] || 0) + 1;
+      console.log("Found location:", location, "Total count:", acc[location]);
     }
     return acc;
   }, {} as Record<string, number>);
+
+  console.log("Total logs:", logs.length);
+  console.log("Logs with location:", logs.filter((l) => l.location).length);
+  console.log("Location stats:", locationStats);
 
   const topLocations = Object.entries(locationStats)
     .sort(([, a], [, b]) => b - a)
