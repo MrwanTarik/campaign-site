@@ -123,13 +123,16 @@ export default function InterestPage() {
   }>({ ip: null, country: null });
 
   React.useEffect(() => {
-    // Capture and store source parameter from URL
+    // Capture and store source and location parameters from URL
     const urlParams = new URLSearchParams(window.location.search);
     const sourceParam = urlParams.get("source");
+    const locationParam = urlParams.get("location");
 
-    // Always clear old source first to prevent stale data
+    // Always clear old source and location first to prevent stale data
     localStorage.removeItem("jiwar_source");
     localStorage.removeItem("jiwar_source_timestamp");
+    localStorage.removeItem("jiwar_location");
+    localStorage.removeItem("jiwar_location_timestamp");
 
     if (sourceParam) {
       // Map short codes to full platform names
@@ -154,6 +157,13 @@ export default function InterestPage() {
 
       // Don't set any source - let it be null for direct visits
       // This way visits from jiwarproperties.com without ?source will be "مباشر"
+    }
+
+    // Capture location parameter if present
+    if (locationParam) {
+      localStorage.setItem("jiwar_location", locationParam);
+      localStorage.setItem("jiwar_location_timestamp", Date.now().toString());
+      console.log("Location parameter captured:", locationParam);
     }
 
     fetch("https://ipapi.co/json/")
@@ -610,9 +620,11 @@ export default function InterestPage() {
       "jiwar_interest_source_timestamp"
     );
 
-    // Get source from URL parameter (stored in localStorage)
+    // Get source and location from URL parameters (stored in localStorage)
     const urlSource = localStorage.getItem("jiwar_source");
     const urlSourceTimestamp = localStorage.getItem("jiwar_source_timestamp");
+    const urlLocation = localStorage.getItem("jiwar_location");
+    const urlLocationTimestamp = localStorage.getItem("jiwar_location_timestamp");
 
     const payload = {
       type: "rooms_submit",
@@ -632,6 +644,8 @@ export default function InterestPage() {
       interestSource,
       source: urlSource || null,
       sourceTimestamp: urlSourceTimestamp || sourceTimestamp,
+      location: urlLocation || null,
+      locationTimestamp: urlLocationTimestamp || null,
       pageName: "interest",
       path:
         typeof location !== "undefined"

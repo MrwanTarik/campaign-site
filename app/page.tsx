@@ -213,13 +213,16 @@ export default function LandingJiwarTimeshare() {
       return;
     }
 
-    // Capture and store source parameter from URL
+    // Capture and store source and location parameters from URL
     const urlParams = new URLSearchParams(window.location.search);
     const sourceParam = urlParams.get("source");
+    const locationParam = urlParams.get("location");
 
-    // Always clear old source first to prevent stale data
+    // Always clear old source and location first to prevent stale data
     localStorage.removeItem("jiwar_source");
     localStorage.removeItem("jiwar_source_timestamp");
+    localStorage.removeItem("jiwar_location");
+    localStorage.removeItem("jiwar_location_timestamp");
 
     if (sourceParam) {
       // Map short codes to full platform names
@@ -244,6 +247,13 @@ export default function LandingJiwarTimeshare() {
 
       // Don't set any source - let it be null for direct visits
       // This way visits from jiwarproperties.com without ?source will be "مباشر"
+    }
+
+    // Capture location parameter if present
+    if (locationParam) {
+      localStorage.setItem("jiwar_location", locationParam);
+      localStorage.setItem("jiwar_location_timestamp", Date.now().toString());
+      console.log("Location parameter captured:", locationParam);
     }
 
     // Flag to prevent sending data twice
@@ -280,9 +290,11 @@ export default function LandingJiwarTimeshare() {
     let totalActiveTime = 0;
     let isTabActive = !document.hidden;
 
-    // Get stored source parameter
+    // Get stored source and location parameters
     const storedSource = localStorage.getItem("jiwar_source");
     const sourceTimestamp = localStorage.getItem("jiwar_source_timestamp");
+    const storedLocation = localStorage.getItem("jiwar_location");
+    const locationTimestamp = localStorage.getItem("jiwar_location_timestamp");
 
     const ctx: any = {
       guid,
@@ -308,6 +320,8 @@ export default function LandingJiwarTimeshare() {
       pageName: "landing",
       source: storedSource || null,
       sourceTimestamp: sourceTimestamp || null,
+      location: storedLocation || null,
+      locationTimestamp: locationTimestamp || null,
     };
 
     fetch("https://ipapi.co/json/")

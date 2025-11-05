@@ -76,6 +76,8 @@ export async function POST(request: NextRequest) {
         lang: existingData.lang || body.lang,
         source: existingData.source || body.source,
         sourceTimestamp: existingData.sourceTimestamp || body.sourceTimestamp,
+        location: existingData.location || body.location,
+        locationTimestamp: existingData.locationTimestamp || body.locationTimestamp,
 
         // Merge page visits
         pageVisits: [
@@ -137,6 +139,12 @@ export async function POST(request: NextRequest) {
                 sourceTimestamp:
                   body.sourceTimestamp ||
                   existingData.interestPage?.sourceTimestamp,
+                location:
+                  body.location ||
+                  existingData.interestPage?.location,
+                locationTimestamp:
+                  body.locationTimestamp ||
+                  existingData.interestPage?.locationTimestamp,
                 secondsOnPage:
                   body.secondsOnPage ||
                   existingData.interestPage?.secondsOnPage,
@@ -174,6 +182,8 @@ export async function POST(request: NextRequest) {
         lang: body.lang,
         source: body.source,
         sourceTimestamp: body.sourceTimestamp,
+        location: body.location,
+        locationTimestamp: body.locationTimestamp,
         serverIP,
         timestamp: new Date().toISOString(),
         lastUpdated: new Date().toISOString(),
@@ -214,6 +224,8 @@ export async function POST(request: NextRequest) {
                 submitted: body.submitted,
                 interestSource: body.interestSource,
                 sourceTimestamp: body.sourceTimestamp,
+                location: body.location,
+                locationTimestamp: body.locationTimestamp,
                 secondsOnPage: body.secondsOnPage,
                 activeSecondsOnPage: body.activeSecondsOnPage,
                 exitedAt: body.exitedAt,

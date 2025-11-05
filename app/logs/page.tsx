@@ -11,6 +11,8 @@ interface AnalyticsData {
   lang?: string;
   source?: string | null;
   sourceTimestamp?: string | null;
+  location?: string | null;
+  locationTimestamp?: string | null;
   timestamp: string;
   lastUpdated?: string;
 
@@ -46,6 +48,8 @@ interface AnalyticsData {
     submitted?: boolean;
     interestSource?: string;
     sourceTimestamp?: string;
+    location?: string;
+    locationTimestamp?: string;
     secondsOnPage?: number;
     activeSecondsOnPage?: number;
     exitedAt?: string;
@@ -258,6 +262,8 @@ export default function LogsPage() {
       lang: log?.lang || undefined,
       source: cleanPlatformSource(log?.source), // Clean and validate platform source
       sourceTimestamp: log?.sourceTimestamp || null,
+      location: log?.location || null,
+      locationTimestamp: log?.locationTimestamp || null,
       timestamp: log?.timestamp || log?.ts || new Date().toISOString(),
       lastUpdated: log?.lastUpdated,
 
@@ -891,6 +897,11 @@ export default function LogsPage() {
                             <p className="font-bold text-[#0b3d2e] text-lg">
                               {log.country || "غير محدد"}
                             </p>
+                            {log.location && (
+                              <span className="px-2 py-0.5 rounded text-xs font-semibold bg-[#1c9a6f]/10 text-[#1c9a6f]">
+                                📍 {log.location}
+                              </span>
+                            )}
                             {log.pageVisits && log.pageVisits.length > 0 && (
                               <div className="flex gap-1">
                                 {log.pageVisits.map((visit, idx) => (
@@ -1043,7 +1054,8 @@ export default function LogsPage() {
                       تفاصيل الزيارة
                     </h2>
                     <p className="text-sm text-[#0b3d2e]/60">
-                      {selectedLog.country} •{" "}
+                      {selectedLog.country}
+                      {selectedLog.location && ` (📍 ${selectedLog.location})`} •{" "}
                       {formatDate(
                         selectedLog.timestamp ||
                           selectedLog.ts ||
@@ -1097,12 +1109,22 @@ export default function LogsPage() {
                       <div className="space-y-3">
                         <div className="flex justify-between items-center py-2 border-b border-[#1c9a6f]/10">
                           <span className="text-sm text-[#0b3d2e]/60">
-                            البلد
+                            البلد (IP)
                           </span>
                           <span className="font-semibold text-[#0b3d2e]">
                             {selectedLog.country || "غير محدد"}
                           </span>
                         </div>
+                        {selectedLog.location && (
+                          <div className="flex justify-between items-center py-2 border-b border-[#1c9a6f]/10">
+                            <span className="text-sm text-[#0b3d2e]/60">
+                              الموقع (من الرابط)
+                            </span>
+                            <span className="font-semibold text-[#1c9a6f]">
+                              {selectedLog.location}
+                            </span>
+                          </div>
+                        )}
                         <div className="flex justify-between items-center py-2 border-b border-[#1c9a6f]/10">
                           <span className="text-sm text-[#0b3d2e]/60">
                             عنوان IP
