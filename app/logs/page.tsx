@@ -375,20 +375,20 @@ export default function LogsPage() {
   // Group logs by session for better visualization
   const uniqueSessions = logs.length; // Each log is now one complete session
 
-  // Calculate session duration statistics
+  // Calculate session duration statistics (non-overlapping ranges)
   const sessionsUnder10Sec = logs.filter((log) => {
     const duration = log.totalSecondsOnSite || log.secondsOnPage || 0;
     return duration < 10;
   }).length;
 
-  const sessionsUnder20Sec = logs.filter((log) => {
+  const sessions10to20Sec = logs.filter((log) => {
     const duration = log.totalSecondsOnSite || log.secondsOnPage || 0;
-    return duration < 20;
+    return duration >= 10 && duration < 20;
   }).length;
 
   const sessionsOver10Min = logs.filter((log) => {
     const duration = log.totalSecondsOnSite || log.secondsOnPage || 0;
-    return duration > 600; // 10 minutes = 600 seconds
+    return duration >= 600; // 10 minutes = 600 seconds
   }).length;
 
   // Show loading while checking authentication
@@ -875,7 +875,7 @@ export default function LogsPage() {
           <div className="bg-white rounded-xl p-6 border border-[#1c9a6f]/20 shadow-sm">
             <div className="flex items-center justify-between mb-2">
               <p className="text-sm font-medium text-[#0b3d2e]/60">
-                جلسات أقل من 20 ثانية
+                جلسات من 10 إلى 20 ثانية
               </p>
               <div className="w-10 h-10 rounded-lg bg-yellow-500/10 flex items-center justify-center">
                 <svg
@@ -894,11 +894,11 @@ export default function LogsPage() {
               </div>
             </div>
             <p className="text-3xl font-bold text-[#0b3d2e]">
-              {sessionsUnder20Sec}
+              {sessions10to20Sec}
             </p>
             <p className="text-xs text-[#0b3d2e]/50 mt-2">
               {logs.length > 0
-                ? `${((sessionsUnder20Sec / logs.length) * 100).toFixed(1)}%`
+                ? `${((sessions10to20Sec / logs.length) * 100).toFixed(1)}%`
                 : "0%"}{" "}
               من إجمالي الجلسات
             </p>
