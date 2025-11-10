@@ -296,13 +296,15 @@ export default function LogsPage() {
   const formatDate = (timestamp: string) => {
     const d = new Date(timestamp);
     if (isNaN(d.getTime())) return "غير معروف";
-    return d.toLocaleString("ar-SA", {
+    // Use Gregorian calendar instead of Hijri
+    return d.toLocaleString("en-GB", {
       year: "numeric",
       month: "long",
       day: "numeric",
       hour: "2-digit",
       minute: "2-digit",
       second: "2-digit",
+      hour12: false,
     });
   };
 
@@ -372,6 +374,22 @@ export default function LogsPage() {
 
   // Group logs by session for better visualization
   const uniqueSessions = logs.length; // Each log is now one complete session
+
+  // Calculate session duration statistics
+  const sessionsUnder10Sec = logs.filter((log) => {
+    const duration = log.totalSecondsOnSite || log.secondsOnPage || 0;
+    return duration < 10;
+  }).length;
+
+  const sessionsUnder20Sec = logs.filter((log) => {
+    const duration = log.totalSecondsOnSite || log.secondsOnPage || 0;
+    return duration < 20;
+  }).length;
+
+  const sessionsOver10Min = logs.filter((log) => {
+    const duration = log.totalSecondsOnSite || log.secondsOnPage || 0;
+    return duration > 600; // 10 minutes = 600 seconds
+  }).length;
 
   // Show loading while checking authentication
   if (isCheckingAuth) {
@@ -820,6 +838,105 @@ export default function LogsPage() {
           </div>
         </div>
 
+        {/* Session Duration Statistics */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div className="bg-white rounded-xl p-6 border border-[#1c9a6f]/20 shadow-sm">
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-sm font-medium text-[#0b3d2e]/60">
+                جلسات أقل من 10 ثواني
+              </p>
+              <div className="w-10 h-10 rounded-lg bg-red-500/10 flex items-center justify-center">
+                <svg
+                  className="w-5 h-5 text-red-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M13 10V3L4 14h7v7l9-11h-7z"
+                  />
+                </svg>
+              </div>
+            </div>
+            <p className="text-3xl font-bold text-[#0b3d2e]">
+              {sessionsUnder10Sec}
+            </p>
+            <p className="text-xs text-[#0b3d2e]/50 mt-2">
+              {logs.length > 0
+                ? `${((sessionsUnder10Sec / logs.length) * 100).toFixed(1)}%`
+                : "0%"}{" "}
+              من إجمالي الجلسات
+            </p>
+          </div>
+
+          <div className="bg-white rounded-xl p-6 border border-[#1c9a6f]/20 shadow-sm">
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-sm font-medium text-[#0b3d2e]/60">
+                جلسات أقل من 20 ثانية
+              </p>
+              <div className="w-10 h-10 rounded-lg bg-yellow-500/10 flex items-center justify-center">
+                <svg
+                  className="w-5 h-5 text-yellow-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+              </div>
+            </div>
+            <p className="text-3xl font-bold text-[#0b3d2e]">
+              {sessionsUnder20Sec}
+            </p>
+            <p className="text-xs text-[#0b3d2e]/50 mt-2">
+              {logs.length > 0
+                ? `${((sessionsUnder20Sec / logs.length) * 100).toFixed(1)}%`
+                : "0%"}{" "}
+              من إجمالي الجلسات
+            </p>
+          </div>
+
+          <div className="bg-white rounded-xl p-6 border border-[#1c9a6f]/20 shadow-sm">
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-sm font-medium text-[#0b3d2e]/60">
+                جلسات أكثر من 10 دقائق
+              </p>
+              <div className="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center">
+                <svg
+                  className="w-5 h-5 text-blue-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+                  />
+                </svg>
+              </div>
+            </div>
+            <p className="text-3xl font-bold text-[#0b3d2e]">
+              {sessionsOver10Min}
+            </p>
+            <p className="text-xs text-[#0b3d2e]/50 mt-2">
+              {logs.length > 0
+                ? `${((sessionsOver10Min / logs.length) * 100).toFixed(1)}%`
+                : "0%"}{" "}
+              من إجمالي الجلسات
+            </p>
+          </div>
+        </div>
+
         {/* Analytics Dashboard Section */}
         {/* <AnalyticsDashboard logs={logs} /> */}
 
@@ -1055,7 +1172,9 @@ export default function LogsPage() {
                     </h2>
                     <p className="text-sm text-[#0b3d2e]/60">
                       {selectedLog.country}
-                      {selectedLog.location && ` (📍 ${selectedLog.location})`} •{" "}
+                      {selectedLog.location &&
+                        ` (📍 ${selectedLog.location})`}{" "}
+                      •{" "}
                       {formatDate(
                         selectedLog.timestamp ||
                           selectedLog.ts ||
