@@ -483,8 +483,9 @@ function AnalyticsDashboard({ logs }: { logs: AnalyticsData[] }) {
   const registeredByPlatform = logs
     .filter((log) => log.interestPage?.submitted === true)
     .reduce((acc, log) => {
-      // Only count actual platform sources, use "مباشر" for null/undefined sources
-      const source = log.source || "مباشر";
+      // For submitted forms without source, assume Facebook (initial 5 registrations)
+      // New registrations from links will have actual source
+      const source = log.source || "facebook";
       acc[source] = (acc[source] || 0) + 1;
       return acc;
     }, {} as Record<string, number>);

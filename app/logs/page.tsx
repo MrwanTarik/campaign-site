@@ -260,6 +260,14 @@ export default function LogsPage() {
       // If this is a submitted form with no source, assume Facebook for the initial 5
       // (Only for forms submitted before the fix)
       if (!finalSource && log?.interestPage?.submitted === true) {
+        console.log(
+          "🔵 Found submitted form without source, setting to Facebook:",
+          {
+            guid: log.guid,
+            originalSource: log?.source,
+            submitted: log?.interestPage?.submitted,
+          }
+        );
         finalSource = "facebook";
       }
 
