@@ -253,44 +253,55 @@ export default function LogsPage() {
 
   // Ensure every log has safe defaults to avoid undefined access
   const normalizeLogs = (rawLogs: any[]): AnalyticsData[] => {
-    return rawLogs.map((log) => ({
-      guid: typeof log?.guid === "string" ? log.guid : "",
-      sessionId: typeof log?.sessionId === "string" ? log.sessionId : "",
-      ip: (log?.ip ?? null) as string | null,
-      country: (log?.country ?? null) as string | null,
-      ua: typeof log?.ua === "string" ? log.ua : "",
-      lang: log?.lang || undefined,
-      source: cleanPlatformSource(log?.source), // Clean and validate platform source
-      sourceTimestamp: log?.sourceTimestamp || null,
-      location: log?.location || null,
-      locationTimestamp: log?.locationTimestamp || null,
-      timestamp: log?.timestamp || log?.ts || new Date().toISOString(),
-      lastUpdated: log?.lastUpdated,
+    return rawLogs.map((log) => {
+      // Determine the source
+      let finalSource = cleanPlatformSource(log?.source);
 
-      // Page visits
-      pageVisits: log?.pageVisits || [],
+      // If this is a submitted form with no source, assume Facebook for the initial 5
+      // (Only for forms submitted before the fix)
+      if (!finalSource && log?.interestPage?.submitted === true) {
+        finalSource = "facebook";
+      }
 
-      // Landing page data
-      landingPage: log?.landingPage || {},
+      return {
+        guid: typeof log?.guid === "string" ? log.guid : "",
+        sessionId: typeof log?.sessionId === "string" ? log.sessionId : "",
+        ip: (log?.ip ?? null) as string | null,
+        country: (log?.country ?? null) as string | null,
+        ua: typeof log?.ua === "string" ? log.ua : "",
+        lang: log?.lang || undefined,
+        source: finalSource, // Use the determined source
+        sourceTimestamp: log?.sourceTimestamp || null,
+        location: log?.location || null,
+        locationTimestamp: log?.locationTimestamp || null,
+        timestamp: log?.timestamp || log?.ts || new Date().toISOString(),
+        lastUpdated: log?.lastUpdated,
 
-      // Interest page data
-      interestPage: log?.interestPage || {},
+        // Page visits
+        pageVisits: log?.pageVisits || [],
 
-      // Totals
-      totalSecondsOnSite: log?.totalSecondsOnSite,
-      totalActiveSecondsOnSite: log?.totalActiveSecondsOnSite,
-      sessionEnded: log?.sessionEnded,
+        // Landing page data
+        landingPage: log?.landingPage || {},
 
-      // Legacy fields for backward compatibility
-      secondsOnPage: log?.secondsOnPage,
-      activeSecondsOnPage: log?.activeSecondsOnPage,
-      sectionsViewed:
-        log?.sectionsViewed || log?.landingPage?.sectionsViewed || [],
-      navClicks: log?.navClicks || log?.landingPage?.navClicks || [],
-      menuClicks: log?.menuClicks || log?.landingPage?.menuClicks || [],
-      faqOpened: log?.faqOpened || log?.landingPage?.faqOpened || [],
-      ts: log?.ts || log?.timestamp,
-    }));
+        // Interest page data
+        interestPage: log?.interestPage || {},
+
+        // Totals
+        totalSecondsOnSite: log?.totalSecondsOnSite,
+        totalActiveSecondsOnSite: log?.totalActiveSecondsOnSite,
+        sessionEnded: log?.sessionEnded,
+
+        // Legacy fields for backward compatibility
+        secondsOnPage: log?.secondsOnPage,
+        activeSecondsOnPage: log?.activeSecondsOnPage,
+        sectionsViewed:
+          log?.sectionsViewed || log?.landingPage?.sectionsViewed || [],
+        navClicks: log?.navClicks || log?.landingPage?.navClicks || [],
+        menuClicks: log?.menuClicks || log?.landingPage?.menuClicks || [],
+        faqOpened: log?.faqOpened || log?.landingPage?.faqOpened || [],
+        ts: log?.ts || log?.timestamp,
+      };
+    });
   };
 
   const formatDate = (timestamp: string) => {

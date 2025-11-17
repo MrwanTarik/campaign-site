@@ -128,13 +128,12 @@ export default function InterestPage() {
     const sourceParam = urlParams.get("source");
     const locationParam = urlParams.get("location");
 
-    // Always clear old source and location first to prevent stale data
-    localStorage.removeItem("jiwar_source");
-    localStorage.removeItem("jiwar_source_timestamp");
-    localStorage.removeItem("jiwar_location");
-    localStorage.removeItem("jiwar_location_timestamp");
-
+    // Only clear and update if new parameters are provided
     if (sourceParam) {
+      // Clear old source only when a new source is provided
+      localStorage.removeItem("jiwar_source");
+      localStorage.removeItem("jiwar_source_timestamp");
+
       // Map short codes to full platform names
       const sourceMapping: { [key: string]: string } = {
         f: "facebook",
@@ -150,21 +149,20 @@ export default function InterestPage() {
       localStorage.setItem("jiwar_source", fullSource);
       localStorage.setItem("jiwar_source_timestamp", Date.now().toString());
       console.log("Source parameter captured:", sourceParam, "→", fullSource);
-    } else {
-      // No source parameter - check document.referrer for actual referrer
-      const referrer = document.referrer;
-      console.log("No source parameter. Referrer:", referrer);
-
-      // Don't set any source - let it be null for direct visits
-      // This way visits from jiwarproperties.com without ?source will be "مباشر"
     }
+    // If no source parameter, keep the existing one from localStorage (don't clear it)
 
     // Capture location parameter if present
     if (locationParam) {
+      // Clear old location only when a new location is provided
+      localStorage.removeItem("jiwar_location");
+      localStorage.removeItem("jiwar_location_timestamp");
+
       localStorage.setItem("jiwar_location", locationParam);
       localStorage.setItem("jiwar_location_timestamp", Date.now().toString());
       console.log("Location parameter captured:", locationParam);
     }
+    // If no location parameter, keep the existing one from localStorage (don't clear it)
 
     fetch("https://ipapi.co/json/")
       .then((r) => (r.ok ? r.json() : null))
@@ -624,7 +622,9 @@ export default function InterestPage() {
     const urlSource = localStorage.getItem("jiwar_source");
     const urlSourceTimestamp = localStorage.getItem("jiwar_source_timestamp");
     const urlLocation = localStorage.getItem("jiwar_location");
-    const urlLocationTimestamp = localStorage.getItem("jiwar_location_timestamp");
+    const urlLocationTimestamp = localStorage.getItem(
+      "jiwar_location_timestamp"
+    );
 
     const payload = {
       type: "rooms_submit",
