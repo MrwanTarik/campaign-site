@@ -17,22 +17,39 @@ export async function GET(request: NextRequest) {
 
     console.log("Reading analytics from Vercel Blob...");
 
-    // List all blobs (both analytics- and session- prefixes)
-    const { blobs: analyticsBlobs } = await list({
-      prefix: "analytics-",
-    });
+    // Helper function to fetch all blobs with pagination
+    async function getAllBlobs(prefix: string) {
+      let allBlobs: any[] = [];
+      let cursor: string | undefined;
+      let hasMore = true;
 
-    const { blobs: sessionBlobs } = await list({
-      prefix: "session-",
-    });
+      while (hasMore) {
+        const result = await list({
+          prefix,
+          cursor,
+          limit: 1000, // Maximum per page
+        });
 
-    const { blobs: roomsBlobs } = await list({
-      prefix: "rooms-",
-    });
+        allBlobs = allBlobs.concat(result.blobs);
+        cursor = result.cursor;
+        hasMore = result.hasMore;
+
+        console.log(
+          `Fetched ${result.blobs.length} blobs with prefix "${prefix}", total so far: ${allBlobs.length}, hasMore: ${hasMore}`
+        );
+      }
+
+      return allBlobs;
+    }
+
+    // List all blobs (both analytics- and session- prefixes) with pagination
+    const analyticsBlobs = await getAllBlobs("analytics-");
+    const sessionBlobs = await getAllBlobs("session-");
+    const roomsBlobs = await getAllBlobs("rooms-");
 
     const blobs = [...analyticsBlobs, ...sessionBlobs, ...roomsBlobs];
 
-    console.log(`Found ${blobs.length} analytics blobs`);
+    console.log(`Found total ${blobs.length} analytics blobs`);
 
     // Fetch and parse each blob
     const logs = [];
