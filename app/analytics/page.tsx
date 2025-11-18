@@ -404,11 +404,14 @@ function AnalyticsDashboard({ logs }: { logs: AnalyticsData[] }) {
   const [selectedCountry, setSelectedCountry] = React.useState<string>("all");
 
   // Calculate metrics
-  const totalVisitors = logs.length;
-  const totalSessions = logs.reduce(
-    (sum, log) => sum + (log.pageVisits?.length || 1),
-    0
+  const totalVisitors = logs.length; // Total unique visitors (each log is one visitor)
+
+  // Count unique sessions (using guid-sessionId combination)
+  const uniqueSessionIds = new Set(
+    logs.map((log) => `${log.guid}-${log.sessionId}`)
   );
+  const totalSessions = uniqueSessionIds.size;
+
   const avgSessionTime =
     logs.length > 0
       ? Math.round(
@@ -875,6 +878,183 @@ function AnalyticsDashboard({ logs }: { logs: AnalyticsData[] }) {
             );
           })}
         </div>
+      </div>
+
+      {/* Registered Users Details Table */}
+      <RegisteredUsersTable logs={logs} getPlatformName={getPlatformName} />
+    </div>
+  );
+}
+
+// Registered Users Details Table Component
+function RegisteredUsersTable({
+  logs,
+  getPlatformName,
+}: {
+  logs: AnalyticsData[];
+  getPlatformName: (key: string) => string;
+}) {
+  // Filter only submitted registrations
+  const registeredUsers = logs.filter(
+    (log) => log.interestPage?.submitted === true
+  );
+
+  // Format interest source for display
+  const formatInterestSource = (source: string | undefined) => {
+    if (!source || source === "direct") return "مباشر";
+
+    const sourceMap: Record<string, string> = {
+      header_cta: "زر التسجيل (الهيدر)",
+      hero_cta_primary: "زر التسجيل الرئيسي (Hero)",
+      investment_section_cta: "زر قسم الاستثمار",
+      "jiwar_card_برج جِوار ١": "بطاقة برج جِوار ١",
+      "jiwar_card_برج جِوار ٢": "بطاقة برج جِوار ٢",
+    };
+
+    return sourceMap[source] || source.replace(/_/g, " ");
+  };
+
+  if (registeredUsers.length === 0) {
+    return (
+      <div className="bg-white rounded-xl p-6 border border-[#1c9a6f]/20 shadow-sm">
+        <h3 className="text-lg font-bold text-[#0b3d2e] mb-4 flex items-center gap-2">
+          <svg
+            className="w-5 h-5 text-[#1c9a6f]"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+            />
+          </svg>
+          تفاصيل المستخدمين المسجلين
+        </h3>
+        <div className="text-center py-8 text-[#0b3d2e]/60">
+          <p>لا توجد تسجيلات حتى الآن</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-white rounded-xl p-6 border border-[#1c9a6f]/20 shadow-sm">
+      <h3 className="text-lg font-bold text-[#0b3d2e] mb-4 flex items-center gap-2">
+        <svg
+          className="w-5 h-5 text-[#1c9a6f]"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+          />
+        </svg>
+        تفاصيل المستخدمين المسجلين ({registeredUsers.length})
+      </h3>
+
+      <div className="overflow-x-auto">
+        <table className="w-full border-collapse">
+          <thead>
+            <tr className="bg-[#1c9a6f]/10 border-b-2 border-[#1c9a6f]">
+              <th className="text-right p-3 text-sm font-bold text-[#0b3d2e]">
+                الاسم
+              </th>
+              <th className="text-right p-3 text-sm font-bold text-[#0b3d2e]">
+                الدولة
+              </th>
+              <th className="text-right p-3 text-sm font-bold text-[#0b3d2e]">
+                المنصة
+              </th>
+              <th className="text-right p-3 text-sm font-bold text-[#0b3d2e]">
+                الاهتمام
+              </th>
+              <th className="text-right p-3 text-sm font-bold text-[#0b3d2e]">
+                العقارات المحددة
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {registeredUsers.map((log, index) => {
+              const form = log.interestPage?.form;
+              const selectedJiwar1 = log.interestPage?.selectedJiwar1 || [];
+              const selectedJiwar2 = log.interestPage?.selectedJiwar2 || [];
+              const source = log.source || "مباشر";
+              const interestSource = log.interestPage?.interestSource;
+
+              return (
+                <tr
+                  key={`${log.guid}-${log.sessionId}-${index}`}
+                  className="border-b border-[#1c9a6f]/20 hover:bg-[#1c9a6f]/5 transition-colors"
+                >
+                  <td className="p-3 text-sm text-[#0b3d2e]">
+                    {form?.name || "غير متوفر"}
+                  </td>
+                  <td className="p-3 text-sm text-[#0b3d2e]">
+                    {form?.country || log.country || "غير محدد"}
+                  </td>
+                  <td className="p-3 text-sm text-[#0b3d2e]">
+                    <span className="inline-flex items-center gap-2">
+                      {getPlatformName(source)}
+                    </span>
+                  </td>
+                  <td className="p-3 text-sm text-[#0b3d2e]">
+                    {formatInterestSource(interestSource)}
+                  </td>
+                  <td className="p-3 text-sm text-[#0b3d2e]">
+                    {selectedJiwar1.length === 0 &&
+                    selectedJiwar2.length === 0 ? (
+                      <span className="text-[#0b3d2e]/40">—</span>
+                    ) : (
+                      <div className="space-y-2">
+                        {selectedJiwar1.length > 0 && (
+                          <div>
+                            <p className="text-xs font-semibold text-[#1c9a6f] mb-1">
+                              جِوار ١:
+                            </p>
+                            <div className="flex flex-wrap gap-1">
+                              {selectedJiwar1.map((id: string) => (
+                                <span
+                                  key={id}
+                                  className="px-2 py-0.5 bg-[#1c9a6f]/10 text-[#1c9a6f] text-xs rounded"
+                                >
+                                  {id}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                        {selectedJiwar2.length > 0 && (
+                          <div>
+                            <p className="text-xs font-semibold text-[#0b3d2e] mb-1">
+                              جِوار ٢:
+                            </p>
+                            <div className="flex flex-wrap gap-1">
+                              {selectedJiwar2.map((id: string) => (
+                                <span
+                                  key={id}
+                                  className="px-2 py-0.5 bg-[#0b3d2e]/10 text-[#0b3d2e] text-xs rounded"
+                                >
+                                  {id}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
       </div>
     </div>
   );
