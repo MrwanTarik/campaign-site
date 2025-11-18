@@ -536,7 +536,7 @@ function AnalyticsDashboard({ logs }: { logs: AnalyticsData[] }) {
       </div>
 
       {/* Key Metrics Row */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="bg-white rounded-xl p-6 border border-[#1c9a6f]/20 shadow-sm">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-lg bg-blue-500/10 flex items-center justify-center">
@@ -587,32 +587,6 @@ function AnalyticsDashboard({ logs }: { logs: AnalyticsData[] }) {
                 className="text-3xl font-bold text-[#0b3d2e] direction-ltr"
               >
                 {formatDuration(avgSessionTime)}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-xl p-6 border border-[#1c9a6f]/20 shadow-sm">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-lg bg-green-500/10 flex items-center justify-center">
-              <svg
-                className="w-6 h-6 text-green-600"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
-                />
-              </svg>
-            </div>
-            <div>
-              <p className="text-sm text-[#0b3d2e]/60 mb-1">إجمالي الجلسات</p>
-              <p className="text-3xl font-bold text-[#0b3d2e]">
-                {totalSessions}
               </p>
             </div>
           </div>
